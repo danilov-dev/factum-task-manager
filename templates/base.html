@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title%}Base{% endblock%}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css'%}">
+</head>
+<body>
+<header>
+
+    <div class="header">
+        <div class="line-block header-block">
+            <a href="{% url 'home'%}">
+                <h1>Factum</h1>
+            </a>
+            <div class="line-block register-box">
+                {% if user.is_authenticated %}
+                <p>I'm here</p>
+                <form method="post" action="{% url 'accounts:logout' %}" class="btn-link">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        <span>Выйти</span>
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
+                <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+</header>
+<div class="main-content">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+</body>
+</html>
