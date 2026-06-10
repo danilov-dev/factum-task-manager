@@ -1,0 +1,116 @@
+/* ========== ПОЛНЫЙ СБРОС СТИЛЕЙ ========== */
+
+/* 1. Боксовая модель */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 2. Корневой элемент */
+html {
+    font-size: 100%;           /* 16px по умолчанию */
+    scroll-behavior: smooth;   /* Плавный скролл */
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 3. Базовые элементы */
+body {
+    min-height: 100vh;
+    line-height: 1.5;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+}
+
+/* 4. Медиа-элементы */
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* 5. Формы */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* 6. Ссылки */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 7. Списки */
+ul,
+ol {
+    list-style: none;
+}
+
+/* 8. Заголовки */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+/* 9. Таблицы */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+/* 10. Строчные элементы */
+strong, b {
+    font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}
+
+/* 11. Фокус для доступности */
+:focus-visible {
+    outline: 2px solid #4A90D9;
+    outline-offset: 2px;
+}
+
+/* 12. Удаление стандартных стилей для кнопок и полей */
+::-moz-focus-inner {
+    border: 0;
+}
+
+/* 13. Скрытие элементов (вместо display: none) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

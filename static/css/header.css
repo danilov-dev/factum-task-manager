@@ -1,0 +1,27 @@
+@import url(const.css);
+
+.header {
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+}
+
+.header h1{
+    font-size: 26px;
+    font-width: extra-condensed;
+}
+
+.header-block {
+    justify-content: space-between;
+    margin: 30px;
+}
+
+.btn-link {
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 5px;
+    padding: 5px 10px;
+    transition: all 0.5s ease-out;
+}
+
+.btn-link:hover{
+    border: 1px solid var(--link-hover);
+}
