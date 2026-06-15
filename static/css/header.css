@@ -20,6 +20,7 @@
     border-radius: 5px;
     padding: 5px 10px;
     transition: all 0.5s ease-out;
+    text-align: center;
 }
 
 .btn-link:hover{
