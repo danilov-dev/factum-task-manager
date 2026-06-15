@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from apps.users.models import User
 
 
-class ProfileView(View):
+class ProfileView(DetailView):
     """Представление профиля пользователя"""
     model = User
     template_name = 'users/profile.html'
     context_object_name = 'profile_user'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
 
     def get_object(self, queryset=None):
         username = self.kwargs.get('username')
@@ -18,8 +20,7 @@ class ProfileView(View):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.get_object()
-        context['is_owen_profile'] = user == self.request.user
+        context['is_own_profile'] = self.object == self.request.user
         return context
 
 class UsersListView(ListView):
