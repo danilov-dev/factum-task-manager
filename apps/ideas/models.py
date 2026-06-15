@@ -86,6 +86,7 @@ class Idea(models.Model):
             count_filled__lt=models.F('count_needed')
         ).exists()
 
+
 class IdeaRole(models.Model):
     """Роль участника команды"""
     idea = models.ForeignKey(
@@ -102,12 +103,12 @@ class IdeaRole(models.Model):
         blank=True,
         verbose_name='Что нужно делать'
     )
-
-    # TODO добавить скиллы к модели User и связать через внешний ключ
-    skill = models.CharField(
-        max_length=50,
+    skill = models.ForeignKey(
+        'users.Skill',
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name='roles',
         verbose_name='требуемый навык'
     )
     count_needed = models.PositiveIntegerField(
@@ -145,6 +146,7 @@ class IdeaRole(models.Model):
         if self.count_filled >= self.count_needed:
             self.is_open = False
             self.save(update_fields=['is_open'])
+
 
 class IdeaResponse(models.Model):
     """Отклик пользователя на роль в инициативе"""
@@ -205,7 +207,6 @@ class IdeaResponse(models.Model):
     def __str__(self):
         return f'{self.user} -> {self.role.title} ({self.get_status_display()})'
 
-
     def clean(self):
         super().clean()
         if not self.role.is_open:
@@ -214,6 +215,3 @@ class IdeaResponse(models.Model):
             raise ValidationError('Все места на эту роль уже заняты')
         if self.user == self.idea.author:
             raise ValidationError('Автор идеи не может откликнуться на свою инициативу')
-
-
-
