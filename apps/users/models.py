@@ -21,12 +21,6 @@ class User(AbstractUser):
         related_name='users',
         verbose_name='Навыки'
     )
-    follwed_ideas = models.ManyToManyField(
-        'ideas.Idea',
-        through='ideas.IdeaFollower',
-        related_name='followers',
-        verbose_name='Отслеживаемы инициативы'
-    )
 
     class Meta:
         verbose_name = 'Пользователь'
