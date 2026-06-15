@@ -1,4 +1,5 @@
 :root {
+    /* Цвета */
     --bg-primary: #0d1117;
     --bg-secondary: #161b22;
     --bg-tertiary: #21262d;
@@ -15,5 +16,56 @@
     --shadow-sm: 0 1px 0 rgba(240, 246, 252, 0.04);
     --shadow-md: 0 3px 6px rgba(0, 0, 0, 0.3);
     --inactive: #C53211;
-    --header-height: 64px;
+
+    /* Отступы */
+    --space-3xs: 0.125rem;
+    --space-2xs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-s: 0.75rem;
+    --space-m: 1rem;
+    --space-l: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    --space-4xl: 6rem;
+
+    /* Контейнеры */
+    --container-padding: var(--space-m);
+    --container-max-width: 1200px;
+
+    /* Примитивы */
+    --stack-gap: var(--space-l);
+    --cluster-gap: var(--space-m);
+    --grid-gap: var(--space-xl);
+    --grid-min: 280px;
+    --sidebar-gap: var(--space-xl);
+    --sidebar-width: 300px;
+    --switcher-gap: var(--space-l);
+    --switcher-threshold: 640px;
+    --cover-padding: var(--space-2xl);
+
+    /* Размеры */
+    --border-radius: 8px;
+    --border-thickness: 1px;
+    --input-height: 40px;
+
+    /* Шрифты */
+    --fs-xs: 0.75rem; /* 12px */
+    --fs-sm: 0.875rem; /* 14px */
+    --fs-base: 1rem; /* 16px */
+    --fs-lg: 1.125rem; /* 18px */
+    --fs-xl: 1.25rem; /* 20px */
+    --fs-2xl: 1.5rem; /* 24px */
+    --fs-3xl: 1.875rem; /* 30px */
+    --fs-4xl: 2.25rem; /* 36px */
+
+    --fw-light: 300;
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-bold: 700;
+
+    --font-normal: normal;
+    --font-italic: italic;
+
+
 }
