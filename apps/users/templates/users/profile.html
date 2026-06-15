@@ -2,6 +2,34 @@
 {%block title%} Login {%endblock%}
 
 {% block content %}
-
+<div class="container regions-1-2">
+    <div class="stack">
+        <div class="cluster">
+            <p>User name:</p>
+            <p>@{{ profile_user.username }}</p>
+        </div>
+        <div class="cluster">
+            <p>Email:</p>
+            <p>{{ profile_user.email }}</p>
+        </div>
+        {% if profile_user.bio %}
+        <div class="column-block">
+            <h3 class="profile-section-title">О себе</h3>
+            <p class="profile-section-content">{{ profile_user.bio|linebreaks }}</p>
+        </div>
+        {%else%}
+        <div class="profile-section">
+            <h3 class="profile-section-title">О себе</h3>
+            <p class="profile-section-content">...</p>
+        </div>
+        {% endif %}
+        {% if is_own_profile %}
+        <a href="#" class="btn-link">Редактировать</a>
+        {% endif %}
+    </div>
+    <div class="column-block border-card">
+        <h2>{{ profile_user.username }}'s projects</h2>
+    </div>
+</div>
 {% endblock %}
 
