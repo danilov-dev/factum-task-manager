@@ -1,6 +1,9 @@
 @import url(reset.css);
 @import url(const.css);
 @import url(header.css);
+@import url(toast-message.css);
+@import url(compositions.css);
+@import url(primitives.css);
 
 body {
     background: var(--bg-primary);
@@ -8,62 +11,25 @@ body {
     font-family: "Segoe UI", system-ui, sans-serif;
 }
 
+header{
+    padding: var(--container-padding);
+}
+
 input{
-    background: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-}
-
-.main-content {
-    margin-top: var(--header-height);
-    padding: 24px 32px;
-    width: 100%;
-    max-width: 1280px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid coral;
-}
-
-.container {
-    width: 100%;
-    max-width: 1012px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid lightblue;
-}
-
-.column-block{
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-    align-content: center;
-}
-
-.line-block {
-    display: flex;
-    gap: 10px;
-    align-content: center;
-    align-items: center;
-}
-
-.form-group{
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-.input-card{
-    align-self: center;
-}
-
-.form-control{
+    height: var(--input-height);
+    padding: 0 10px;
     background: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
 }
 
-.form-control:-webkit-autofill {
+input:-webkit-autofill {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: var(--text-primary);
+}
+
+.debug-layout * {
+  outline: 1px solid rgba(255, 0, 0, 0.3);
+  background: rgba(0, 0, 255, 0.05) !important;
 }
