@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{%block title%} IDEAS {%endblock%}
+
+{% block content %}
+<div class="stack">
+    <div class="title">
+        <h1>IDEAS</h1>
+    </div>
+    <div class="list stack-without-gap">
+        {% for idea in ideas %}
+        <div class="list-item cluster ">
+            <a href="{% url 'ideas:detail' pk=idea.pk %}" class="">
+                <div class="cluster">
+                    <div class="stack-without-gap">
+                        <div class="title-box cluster">
+                            <h2 class="card-title">{{idea.title}}</h2>
+                            <div class="status-indicator">
+                                <p class="subtitle">{{idea.get_status_display}}</p>
+                            </div>
+                        </div>
+                        <div class="cluster">
+                            <p class="subtitle">{{idea.category}}</p>
+                            <p class="subtitle">created at {{idea.created_at|date:"d.m.y"}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if user == idea.author %}
+                <a href="{% url 'ideas:edit' pk=idea.pk %}" class="btn-link">edit</a>
+                {% endif %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
