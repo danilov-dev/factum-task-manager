@@ -35,13 +35,20 @@ class Skill(models.Model):
     """Навык"""
 
     class Category(models.TextChoices):
-        IT = 'it', 'IT и технологии'
-        DESIGN = 'design', 'Дизайн'
-        MARKETING = 'marketing', 'Маркетинг и SMM'
-        MANAGEMENT = 'management', 'Управление проектами'
-        FINANCE = 'finance', 'Финансы и фандрайзинг'
-        WRITING = 'writing', 'Тексты и копирайтинг'
-        EDUCATION = 'education', 'Образование и тренинги'
+        IT_DEV = 'it_dev', 'IT и Разработка'
+        DESIGN = 'design', 'Дизайн и Графика'
+        MARKETING = 'marketing', 'Маркетинг, PR и SMM'
+        CONTENT = 'content', 'Тексты, Копирайтинг и Переводы'
+        MEDIA = 'media', 'Видео, Аудио и Фотография'
+        MANAGEMENT = 'management', 'Управление проектами (PM)'
+        EVENTS = 'events', 'Организация мероприятий'
+        FINANCE = 'finance', 'Финансы и Фандрайзинг'
+        LEGAL = 'legal', 'Юридическая помощь'
+        EDUCATION = 'education', 'Образование, Менторство и Психология'
+        RESEARCH = 'research', 'Наука и Аналитика'
+        ART = 'art', 'Искусство и Культура'
+        VOLUNTEERING = 'volunteering', 'Волонтёрство и логистика'
+        HEALTH = 'health', 'Здоровье и Медицина'
         OTHER = 'other', 'Другое'
 
     name = models.CharField(
