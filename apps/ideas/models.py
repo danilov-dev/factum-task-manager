@@ -81,8 +81,8 @@ class Idea(models.Model):
         )
 
     @property
-    def all_roles_fielled(self):
-        return self.role.filter(
+    def all_roles_filled(self):
+        return self.roles.filter(
             count_filled__lt=models.F('count_needed')
         ).exists()
 
@@ -103,13 +103,20 @@ class IdeaRole(models.Model):
         blank=True,
         verbose_name='Что нужно делать'
     )
-    skill = models.ForeignKey(
+    # skill = models.ForeignKey(
+    #     'users.Skill',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='roles',
+    #     verbose_name='требуемый навык'
+    # )
+
+    skills = models.ManyToManyField(
         'users.Skill',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='roles',
-        verbose_name='требуемый навык'
+        through='IdeaRoleSkill',
+        related_name='relose_necessary_this',
+        verbose_name='Необходимые навыки'
     )
     count_needed = models.PositiveIntegerField(
         default=1,
@@ -141,11 +148,50 @@ class IdeaRole(models.Model):
         """Сколько свободных мест"""
         return max(0, self.count_needed - self.count_filled)
 
+    @property
+    def required_skills(self):
+        return self.skills.filter(role_skill__is_required=True)
+
     def close_if_full(self):
         """Закрыть набор, если все места заняты"""
         if self.count_filled >= self.count_needed:
             self.is_open = False
             self.save(update_fields=['is_open'])
+
+
+class IdeaRoleSkill(models.Model):
+    """Сущность для связи роли и навыков """
+    role = models.ForeignKey(
+        'IdeaRole',
+        on_delete=models.CASCADE,
+        related_name='necessary_skills',
+        verbose_name='Роль'
+    )
+    skill = models.ForeignKey(
+        'users.Skill',
+        on_delete=models.CASCADE,
+        related_name='necessary_in_roles',
+        verbose_name='Навык'
+    )
+    is_required = models.BooleanField(
+        default=True,
+        verbose_name='Обязательный навык',
+        help_text='Если False, навык будет считаться преимуществом, но не строгим требованием'
+    )
+
+    class Meta:
+        verbose_name = 'Требование к навыку в роли'
+        verbose_name_plural = 'Требования к навыкам в ролях'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['role', 'skill'],
+                name='unique_role_skill_in_role'
+            )
+        ]
+
+    def __str__(self):
+        required_text = 'Обязательно' if self.is_required else 'Желательно'
+        return f'{self.role.title} -> {self.skill.name} ({required_text})'
 
 
 class IdeaResponse(models.Model):
