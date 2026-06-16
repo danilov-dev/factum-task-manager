@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'ckeditor',
+    'ckeditor_uploader',
+
     'apps.accounts.apps.AccountsConfig',
     'apps.users.apps.UsersConfig',
     'apps.ideas.apps.IdeasConfig',
@@ -122,3 +125,20 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# CKEditor настройки
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
