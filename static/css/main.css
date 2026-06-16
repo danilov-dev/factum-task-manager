@@ -13,14 +13,22 @@ body {
 
 header{
     padding: var(--container-padding);
+    border-bottom: 1px solid var(--border-color);
 }
 
-input{
+input,
+textarea,
+select{
     height: var(--input-height);
     padding: 0 10px;
     background: none;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
+}
+
+select option {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 input:-webkit-autofill {
@@ -32,4 +40,35 @@ input:-webkit-autofill {
 .debug-layout * {
   outline: 1px solid rgba(255, 0, 0, 0.3);
   background: rgba(0, 0, 255, 0.05) !important;
+}
+
+.card{
+    padding: var(--space-xs);
+    justify-content: space-between;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.list-item{
+    padding: var(--space-m);
+    border-top: 1px solid var(--border-color);
+    justify-content: space-between;
+}
+.subtitle{
+    font-size: var(--fs-xs);
+}
+
+.card-title{
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-medium);
+}
+
+.list-item:hover .card-title{
+    color: var(--link-color);
+}
+
+.status-indicator{
+    padding: 0 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--elips-radius);
 }
