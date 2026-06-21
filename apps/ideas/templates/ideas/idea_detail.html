@@ -2,30 +2,33 @@
 {% block title %}Создание идеи{% endblock %}
 
 {% block content %}
-<div class="stack clamp-card card">
-    <div class="cluster">
-        <p>Идея:</p>
-        <h1> {{idea.title}}</h1>
+<div class="stack">
+    <div class="idea-header ">
+        <div class="card-title cluster">
+            <div class="avatar"></div>
+            <h2 class="card-title">{{idea.title}}</h2>
+            <div class="status-indicator">
+                <p class="subtitle">{{idea.get_status_display}}</p>
+            </div>
+        </div>
+        <div class="cluster">
+            <div class="status-indicator">
+                <p class="subtitle">Свободных Мест: {{ idea.roles.all|length }} / {{ idea.roles.all|length }}</p>
+            </div>
+            <div class="status-indicator">
+                <p class="subtitle">Рейтинг: 85</p>
+            </div>
+        </div>
+    </div>
+    <div class="regions-2-1">
+        <div class="stack">
+            <div class="stack">
+                <h2 class="card-header-block card-title">Описание</h2>
+                <p>{{idea.description}}</p>
+            </div>
+        </div>
     </div>
 
-    <div class="stack ">
-        <div class="cluster">
-            <p>Автор:</p>
-            <p>{{idea.author}}</p>
-        </div>
-        <div class="cluster">
-            <p>Описание:</p>
-            <p>{{idea.description}}</p>
-        </div>
-        <div class="cluster">
-            <p>Категория:</p>
-            <p>{{idea.get_category_display}}</p>
-        </div>
-        <div class="cluster">
-            <p>Статус идеи:</p>
-            <p>{{idea.get_status_display}}</p>
-        </div>
-    </div>
     {% if user == idea.author %}
     <a href="{% url 'ideas:edit' pk=idea.pk %}" class="btn-link">edit</a>
     {% endif %}

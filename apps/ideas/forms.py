@@ -15,7 +15,7 @@ class IdeaCreateForm(forms.ModelForm):
         )
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "idea's title"}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': "description"}),
+            'description': forms.Textarea(attrs={'class': 'form-control description', 'placeholder': "description"}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

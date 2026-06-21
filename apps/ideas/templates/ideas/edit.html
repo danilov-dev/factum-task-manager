@@ -3,10 +3,10 @@
 {% block title %}Редактировать идею{% endblock %}
 
 {% block content %}
-<div class="container stack clamp-card">
-    <h1>Редактировать: {{ idea.title }}</h1>
+<div class="container stack">
+    <h1 class="card-title">Редактировать: {{ idea.title }}</h1>
 
-    <form method="post">
+    <form method="post" class="stack">
         {% csrf_token %}
 
         <div class="cluster">
@@ -38,8 +38,8 @@
             {{ form.status.errors }}
         </div>
 
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-        <a href="{% url 'ideas:detail' pk=idea.pk %}" class="btn btn-secondary">Отмена</a>
+        <button type="submit" class="btn btn-primary btn-link">Сохранить</button>
+        <a href="{% url 'ideas:detail' pk=idea.pk %}" class="btn btn-secondary btn-link">Отмена</a>
     </form>
 </div>
 {% endblock %}

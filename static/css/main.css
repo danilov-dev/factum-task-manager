@@ -19,7 +19,7 @@ header{
 input,
 textarea,
 select{
-    height: var(--input-height);
+
     padding: 0 10px;
     background: none;
     border: 1px solid var(--border-color);
@@ -71,4 +71,21 @@ input:-webkit-autofill {
     padding: 0 8px;
     border: 1px solid var(--border-color);
     border-radius: var(--elips-radius);
+}
+
+.idea-header{
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.card-header-block{
+    width: 100%;
+    padding: var(--space-xs) 0;
+    border-bottom:1px solid var(--bg-tertiary);
+}
+
+.description{
+    width: 300px;
+    height: 1000px;
 }
