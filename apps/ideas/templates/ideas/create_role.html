@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+
+    {{ skills_data|json_script:"skills-data" }}
+
+    <form method="post" id="role-form" class="stack">
+        {% csrf_token %}
+        <div class="card">
+            <div class="stack">{{ form.as_p }}</div>
+        </div>
+
+        <div class="card stack">
+            <div class="card-header">
+                <h5 class="mb-0">Выбранные навыки</h5>
+                <small class="text-muted">Отметьте обязательные звёздочкой</small>
+            </div>
+            <div class="card-body">
+                <div id="selected-skills" class="selected-skills">
+                    <div class="text-muted text-center py-3" id="empty-msg">
+                        <i class="fas fa-arrow-up"></i> Выберите навыки из списка ниже
+                    </div>
+                </div>
+                {{ formset.management_form }}
+                <div id="hidden-forms"></div>
+            </div>
+        </div>
+
+        <div class="card stack">
+            <div class="card-header"><h5 class="mb-0">Добавить навык</h5></div>
+            <div class="card-body stack">
+                <select id="category" class="form-select mb-3">
+                    <option value="">Выберите категорию...</option>
+                    {% for value, label in category_choices.items %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <div id="skills-list">
+                    <div class="text-muted text-center py-3">
+                        <i class="fas fa-info-circle"></i> Выберите категорию
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-link"><i class="fas fa-save"></i> Создать роль</button>
+        <a href="{% url 'ideas:detail' pk=idea.id %}" class="btn btn-secondary btn-link"><i class="fas fa-times"></i> Отмена</a>
+    </form>
+</div>
+
+<style>
+    .selected-skills {
+        min-height: 100px;
+        border: 1px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+    }
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        margin: 4px;
+        background: none;
+        border: 1px solid #b6d4fe;
+        border-radius: 20px;
+        font-size: 14px;
+        animation: appear 0.2s ease;
+    }
+    .skill-tag.required {
+        background: #cfe2ff;
+        border-color: #0d6efd;
+    }
+    .skill-tag button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .remove{
+        width: 30px;
+        height: 30px;
+        background: red;
+    }
+    .skill-tag button:hover { color: #0d6efd; }
+    .skill-tag button.remove:hover { color: #dc3545; }
+    .skill-btn {
+        margin: 4px;
+        padding: 6px 14px;
+        border: 1px solid var(--bg-tertiary);
+        border-radius: 20px;
+        background: var(--bg-primary);
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .skill-btn:hover:not(:disabled) { border: 1px solid var(--link-hover); }
+    .skill-btn:disabled {
+        background: none;
+        border-color: var(--link-color);
+        opacity: 0.6;
+        cursor: default;
+    }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    @keyframes appear {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .toast {
+        position: fixed;
+        top: 20px; right: 20px;
+        padding: 10px 18px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        animation: appear 0.3s ease;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const skillsData = JSON.parse(document.getElementById('skills-data').textContent);
+    let counter = 0;
+
+    const $ = id => document.getElementById(id);
+    const selected = $('selected-skills');
+    const emptyMsg = $('empty-msg');
+    const hiddenForms = $('hidden-forms');
+
+    function updateTotal() {
+        const input = document.querySelector('[name="skills-TOTAL_FORMS"]');
+        if (input) input.value = hiddenForms.querySelectorAll('div').length;
+    }
+
+    function toast(msg, type = 'info') {
+        const colors = { success: '#d4edda', info: '#d1ecf1', warning: '#fff3cd' };
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.style.background = colors[type] || colors.info;
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2500);
+    }
+
+    function removeSkill(id) {
+        const tag = selected.querySelector(`.skill-tag[data-id="${id}"]`);
+        const form = hiddenForms.querySelector(`div[data-id="${id}"]`);
+
+        if (tag) {
+            tag.style.opacity = '0';
+            tag.style.transform = 'scale(0.9)';
+            setTimeout(() => tag.remove(), 200);
+        }
+        if (form) form.remove();
+
+        updateTotal();
+
+        const btn = document.querySelector(`.skill-btn[data-id="${id}"]`);
+        if (btn) btn.disabled = false;
+
+        if (!selected.querySelector('.skill-tag')) emptyMsg.style.display = 'block';
+        toast('Навык удалён', 'info');
+    }
+
+    function toggleRequired(id) {
+        const tag = selected.querySelector(`.skill-tag[data-id="${id}"]`);
+        const form = hiddenForms.querySelector(`div[data-id="${id}"]`);
+        if (!tag || !form) return;
+
+        const isReq = tag.classList.toggle('required');
+        form.querySelector('.req-check').checked = isReq;
+        toast(isReq ? 'Обязательный навык' : 'Необязательный навык', 'info');
+    }
+
+    function addSkill(id, name) {
+        if (selected.querySelector(`.skill-tag[data-id="${id}"]`)) {
+            toast('Навык уже добавлен', 'warning');
+            return;
+        }
+        emptyMsg.style.display = 'none';
+
+        // Создаём тег с прямыми обработчиками
+        const tag = document.createElement('div');
+        tag.className = 'skill-tag';
+        tag.dataset.id = id;
+        tag.style.cursor = 'pointer'
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+
+        tag.addEventListener('click', () => removeSkill(id))
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.title = 'Обязательный';
+        toggleBtn.innerHTML = '<i class="fas fa-star"></i>';
+        toggleBtn.addEventListener('click', () => toggleRequired(id));
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove';
+        removeBtn.title = 'Удалить';
+        removeBtn.textContent = 'X';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.addEventListener('click', () => removeSkill(id));
+
+        tag.append(nameSpan, toggleBtn, removeBtn);
+        selected.appendChild(tag);
+
+        // Скрытая форма
+        const form = document.createElement('div');
+        form.dataset.id = id;
+        form.style.display = 'none';
+        form.innerHTML = `
+            <input type="hidden" name="skills-${counter}-skill" value="${id}">
+            <input type="checkbox" name="skills-${counter}-is_required" class="req-check">
+            <input type="hidden" name="skills-${counter}-id">
+            <input type="hidden" name="skills-${counter}-DELETE">
+        `;
+        hiddenForms.appendChild(form);
+        counter++;
+        updateTotal();
+
+        const btn = document.querySelector(`.skill-btn[data-id="${id}"]`);
+        if (btn) btn.disabled = true;
+
+        toast(`Навык "${name}" добавлен`, 'success');
+    }
+
+    function loadSkills(category) {
+        const container = $('skills-list');
+        if (!category) {
+            container.innerHTML = '<div class="text-muted text-center py-3">Выберите категорию</div>';
+            return;
+        }
+        const skills = skillsData[category] || [];
+        if (!skills.length) {
+            container.innerHTML = '<div class="text-muted text-center py-3">Нет навыков</div>';
+            return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'skills-grid';
+
+        skills.forEach(s => {
+            const added = !!selected.querySelector(`.skill-tag[data-id="${s.id}"]`);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'skill-btn';
+            btn.dataset.id = s.id;
+            btn.disabled = added;
+            btn.textContent = (added ? '✓ ' : '') + s.name;
+            btn.addEventListener('click', () => addSkill(s.id, s.name));
+            grid.appendChild(btn);
+        });
+
+        container.innerHTML = '';
+        container.appendChild(grid);
+    }
+
+    $('category').addEventListener('change', e => loadSkills(e.target.value));
+
+    // Инициализация TOTAL_FORMS
+    if (!document.querySelector('[name="skills-TOTAL_FORMS"]')) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'skills-TOTAL_FORMS';
+        input.value = '0';
+        hiddenForms.parentNode.insertBefore(input, hiddenForms);
+    }
+
+    // Загружаем первую категорию
+    const firstOpt = $('category').querySelector('option:not([value=""])');
+    if (firstOpt) {
+        $('category').value = firstOpt.value;
+        loadSkills(firstOpt.value);
+    }
+});
+</script>
+{% endblock %}

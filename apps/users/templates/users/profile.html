@@ -27,8 +27,60 @@
         <a href="#" class="btn-link">Редактировать</a>
         {% endif %}
     </div>
-    <div class="column-block border-card">
-        <h2>{{ profile_user.username }}'s projects</h2>
+    <div class="stack">
+        <div class="cluster" style="justify-content: space-between;">
+            <h2>{{ profile_user.username }}'s ideas ({{ ideas.count }})</h2>
+            {% if user == profile_user %}
+            <a href="{% url 'ideas:create' %}" class="btn btn-sm">+ Новая идея</a>
+            {% endif %}
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Статус</th>
+                    <th>Категория</th>
+                    <th>Дата</th>
+                    <th style="text-align: right;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for idea in ideas %}
+                <tr>
+                    <td>
+                        <a href="{% url 'ideas:detail' pk=idea.pk %}" class="table-link">
+                            {{ idea.title }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ idea.status }}">
+                            {{ idea.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ idea.get_category_display }}</td>
+                    <td>{{ idea.created_at|date:"d.m.Y" }}</td>
+                    <td style="text-align: right;">
+                        <div class="cluster" style="justify-content: flex-end;">
+                            <a href="{% url 'ideas:detail' pk=idea.pk %}" class="btn-sm">Просмотр</a>
+                            {% if user == idea.author %}
+                            <a href="{% url 'ideas:edit' pk=idea.pk %}" class="btn-sm btn-edit">✎</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5"
+                        style="text-align: center; padding: var(--space-3xl); color: var(--text-secondary);">
+                        Нет идей
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

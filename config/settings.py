@@ -36,8 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'ckeditor',
-    'ckeditor_uploader',
+    'markdownx',
 
     'apps.accounts.apps.AccountsConfig',
     'apps.users.apps.UsersConfig',
@@ -126,19 +125,30 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
-# CKEditor настройки
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = "pillow"
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': '100%',
-    },
-}
-
 import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Markdown settings
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.codehilite',
+    'markdown.extensions.toc',
+    'markdown.extensions.nl2br',
+    'pymdownx.tilde',
+    'pymdownx.mark',
+    'pymdownx.tasklist',
+    'pymdownx.superfences',
+]
+
+MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
+    'pymdownx.tasklist': {
+        'custom_checkbox': True,
+    },
+}
+
+MARKDOWNX_URLS_PATH = '/markdownx/markdownify/'
+MARKDOWNX_UPLOAD_URLS_PATH = '/markdownx/upload/'
+MARKDOWNX_MEDIA_PATH = 'markdownx/'
+MARKDOWNX_AUTO_RENDER = False

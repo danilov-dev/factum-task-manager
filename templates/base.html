@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}Base{% endblock %}</title>
     {% load static %}
+    {% block extra_head %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body class="">
@@ -15,16 +16,28 @@
         </a>
         <div class="cluster">
             {% if user.is_authenticated %}
-                <a href="{% url 'users:profile' username=user.username %}">{{ user.username }}</a>
-                <form method="post" action="{% url 'accounts:logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn btn-link">
-                        <span>Выйти</span>
-                    </button>
-                </form>
+            <div class="text-cluster">
+                {# Аватар #}
+                {% if user.avatar %}
+                <img src="{{ profile_user.avatar.url }}"
+                     alt="Аватар {{ profile_user.username }}"
+                     class="user-avatar-lg">
+                {% else %}
+                <div class="user-avatar user-avatar-char">
+                    {{ user.username|first|upper }}
+                </div>
+                {% endif %}
+                <a class="icon-link" href="{% url 'users:profile' username=user.username %}">{{ user.username }}</a>
+            </div>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn btn-link">
+                    <span>Выйти</span>
+                </button>
+            </form>
             {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
-                <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
+            <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
+            <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
             {% endif %}
         </div>
     </div>
@@ -36,20 +49,20 @@
 
 <div id="toast-container" class="toast-container stack">
     {% if messages %}
-        {% for message in messages %}
-            <div class="toast toast-{{ message.tags }} cluster" style="justify-content: space-between;">
-                <div class="cluster">
+    {% for message in messages %}
+    <div class="toast toast-{{ message.tags }} cluster" style="justify-content: space-between;">
+        <div class="cluster">
                     <span class="toast-icon">
                         {% if message.tags == 'success' %}✓
                         {% elif message.tags == 'error' %}✗
                         {% elif message.tags == 'warning' %}⚠
                         {% else %}ℹ{% endif %}
                     </span>
-                    <span class="toast-message">{{ message }}</span>
-                </div>
-                <button onclick="this.parentElement.remove()" class="toast-close">×</button>
-            </div>
-        {% endfor %}
+            <span class="toast-message">{{ message }}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="toast-close">×</button>
+    </div>
+    {% endfor %}
     {% endif %}
 </div>
 

@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from markdownx.models import MarkdownxField
 
 from config import settings
-from ckeditor.fields import RichTextField
 
 
 class Idea(models.Model):
@@ -33,31 +33,31 @@ class Idea(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='ideas',
-        verbose_name='Автор'
+        verbose_name='Автор',
     )
     title = models.CharField(max_length=255, verbose_name='Название')
-    description = RichTextField(verbose_name='Описание')
+    description = MarkdownxField(verbose_name='Описание')
     category = models.CharField(
         max_length=50,
         choices=Category.choices,
-        verbose_name='Категория'
+        verbose_name='Категория',
     )
     status = models.CharField(
         max_length=50,
         choices=Status.choices,
-        verbose_name='Статус'
+        verbose_name='Статус',
     )
     is_published = models.BooleanField(
         default=False,
-        verbose_name='Опубликована'
+        verbose_name='Опубликована',
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Создана'
+        verbose_name='Создана',
     )
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name='Обновлена'
+        verbose_name='Обновлена',
     )
 
     class Meta:
@@ -82,57 +82,57 @@ class Idea(models.Model):
 
     @property
     def all_roles_filled(self):
-        return self.roles.filter(
+        if not self.roles.exists():
+            return False
+        return not self.roles.filter(
             count_filled__lt=models.F('count_needed')
         ).exists()
 
+    @property
+    def unfilled_roles_count(self):
+        return self.roles.filter(
+            count_filled__lt=models.F('count_needed')
+        ).count()
+
 
 class IdeaRole(models.Model):
-    """Роль участника команды"""
+    """Роль участника команды."""
+
     idea = models.ForeignKey(
         Idea,
         on_delete=models.CASCADE,
         related_name='roles',
-        verbose_name='Инициатива'
+        verbose_name='Инициатива',
     )
     title = models.CharField(
         max_length=150,
-        verbose_name='Название роли'
+        verbose_name='Название роли',
     )
     description = models.TextField(
         blank=True,
-        verbose_name='Что нужно делать'
+        verbose_name='Что нужно делать',
     )
-    # skill = models.ForeignKey(
-    #     'users.Skill',
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    #     related_name='roles',
-    #     verbose_name='требуемый навык'
-    # )
-
     skills = models.ManyToManyField(
         'users.Skill',
         through='IdeaRoleSkill',
         related_name='relose_necessary_this',
-        verbose_name='Необходимые навыки'
+        verbose_name='Необходимые навыки',
     )
     count_needed = models.PositiveIntegerField(
         default=1,
-        verbose_name='Необходимое количество'
+        verbose_name='Необходимое количество',
     )
     count_filled = models.PositiveIntegerField(
         default=0,
-        verbose_name='Количество набранных'
+        verbose_name='Количество набранных',
     )
     is_open = models.BooleanField(
         default=True,
-        verbose_name='Открыт для откликов'
+        verbose_name='Открыт для откликов',
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Создана'
+        verbose_name='Создана',
     )
 
     class Meta:
@@ -145,7 +145,7 @@ class IdeaRole(models.Model):
 
     @property
     def spots_left(self):
-        """Сколько свободных мест"""
+        """Сколько свободных мест."""
         return max(0, self.count_needed - self.count_filled)
 
     @property
@@ -153,30 +153,31 @@ class IdeaRole(models.Model):
         return self.skills.filter(role_skill__is_required=True)
 
     def close_if_full(self):
-        """Закрыть набор, если все места заняты"""
+        """Закрыть набор, если все места заняты."""
         if self.count_filled >= self.count_needed:
             self.is_open = False
             self.save(update_fields=['is_open'])
 
 
 class IdeaRoleSkill(models.Model):
-    """Сущность для связи роли и навыков """
+    """Сущность для связи роли и навыков."""
+
     role = models.ForeignKey(
         'IdeaRole',
         on_delete=models.CASCADE,
         related_name='necessary_skills',
-        verbose_name='Роль'
+        verbose_name='Роль',
     )
     skill = models.ForeignKey(
         'users.Skill',
         on_delete=models.CASCADE,
         related_name='necessary_in_roles',
-        verbose_name='Навык'
+        verbose_name='Навык',
     )
     is_required = models.BooleanField(
         default=True,
         verbose_name='Обязательный навык',
-        help_text='Если False, навык будет считаться преимуществом, но не строгим требованием'
+        help_text='Если False, навык будет считаться преимуществом, но не строгим требованием',
     )
 
     class Meta:
@@ -185,7 +186,7 @@ class IdeaRoleSkill(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['role', 'skill'],
-                name='unique_role_skill_in_role'
+                name='unique_role_skill_in_role',
             )
         ]
 
@@ -195,7 +196,7 @@ class IdeaRoleSkill(models.Model):
 
 
 class IdeaResponse(models.Model):
-    """Отклик пользователя на роль в инициативе"""
+    """Отклик пользователя на роль в инициативе."""
 
     class Status(models.TextChoices):
         PENDING = 'pending', 'на рассмотрении'
@@ -206,37 +207,37 @@ class IdeaResponse(models.Model):
         Idea,
         on_delete=models.CASCADE,
         related_name='responses',
-        verbose_name='Инициатива'
+        verbose_name='Инициатива',
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='responses',
-        verbose_name='Кто откликнулся'
+        verbose_name='Кто откликнулся',
     )
     role = models.ForeignKey(
         IdeaRole,
         on_delete=models.CASCADE,
         related_name='responses',
-        verbose_name='Роль'
+        verbose_name='Роль',
     )
     message = models.TextField(
         blank=True,
-        verbose_name='Сопроводительное письмо'
+        verbose_name='Сопроводительное письмо',
     )
     status = models.CharField(
         max_length=50,
         choices=Status.choices,
         default=Status.PENDING,
-        verbose_name='Статус'
+        verbose_name='Статус',
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Создан'
+        verbose_name='Создан',
     )
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name='Обновлен'
+        verbose_name='Обновлен',
     )
 
     class Meta:
@@ -246,7 +247,7 @@ class IdeaResponse(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'role'],
-                name='unique_response_per_role'
+                name='unique_response_per_role',
             )
         ]
 
