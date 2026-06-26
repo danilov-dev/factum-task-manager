@@ -2,7 +2,9 @@
 {%block title%} Main {%endblock%}
 
 {% block content %}
-<div class="container">
+<div class="stack">
   <h1>Main page</h1>
+  <a href="{% url 'ideas:idea_list' %}" class="btn-link">All</a>
+  <a href="{% url 'ideas:create' %}" class="btn-link">New idea</a>
 </div>
 {% endblock %}

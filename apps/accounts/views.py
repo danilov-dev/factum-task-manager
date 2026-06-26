@@ -21,6 +21,10 @@ class UserLoginView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = 'accounts/login.html'
 
+    def form_valid(self, form):
+        messages.success(self.request, f'Wellcome {form.get_user().username}!')
+        return super().form_valid(form)
+
 @require_http_methods(["POST", "GET"])
 @login_required
 def logout_view(request):

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}{{ idea.title }}{% endblock %}
+{% load static %}
+{% load markdown_tags %}
+
+{% block content %}
+<div class="container" style="padding-block: var(--space-2xl);">
+
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="{% url 'ideas:idea_list' %}">Идеи</a>
+        <span>{{ idea.title }}</span>
+    </nav>
+
+    <!-- HEADER BLOCK -->
+    <header class="card-header-block grid-title">
+        <h1 class="card-header-block__title">{{ idea.title }}</h1>
+        <div class="cluster">
+            <div class="status-badge status-{{ idea.status }}">{{ idea.get_status_display }}</div>
+            {% if user == idea.author %}
+            <a href="{% url 'ideas:edit' idea.pk %}" class="btn ">
+                Редактировать
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Асимметричная сетка: контент + сайдбар -->
+    <div class="asymmetric-grid">
+
+        <!-- Левая колонка: описание -->
+        <section class="stack">
+            <div class="sidebar-panel">
+                <h3>Описание</h3>
+                <div class="text-block" style="padding: 0; margin: 0; max-width: none;">
+                    {{ idea.description|markdown }}
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="statistics">
+                <div>
+                    <span class="stat-value">80</span>
+                    <span class="stat-label">Активность</span>
+                </div>
+                <div>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Оценки</span>
+                </div>
+                <div>
+                    <span class="stat-value">{{ watchers_count|default:0 }}</span>
+                    <span class="stat-label">Наблюдатели</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Правая колонка: роли -->
+        <aside class="stack">
+            <div class="sidebar-panel">
+                <div class="grid-title">
+                    <a href="#">
+                        <h3 class="icon-link">Роли в проекте</h3>
+                    </a>
+                    {% if user == idea.author %}
+                    <a href="{% url 'ideas:roles:create_role' idea.pk %}" class="icon-link">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 24 24"><title
+                                xmlns="">round-plus</title>
+                            <path fill="currentColor"
+                                  d="M18 12.998h-5v5a1 1 0 0 1-2 0v-5H6a1 1 0 0 1 0-2h5v-5a1 1 0 0 1 2 0v5h5a1 1 0 0 1 0 2"/>
+                        </svg>
+                    </a>
+                    {%endif%}
+                </div>
+                {% if idea.roles.all %}
+                <div class="divided-list">
+                    {% for role in idea.roles.all %}
+                    {% if role.is_open %}
+                    <div class="divided-list-item">
+                        <strong>{{ role.title }}</strong>
+                        <span class="user-meta">
+                    Свободно: {{ role.count_filled }} из {{ role.count_needed }}
+                  </span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="user-meta">Роли пока не добавлены</p>
+                {% endif %}
+            </div>
+
+            <!-- Автор -->
+            <div class="sidebar-panel">
+                <h3>Автор</h3>
+                <a class="icon-link" href="{% url 'users:profile' username=idea.author.username %}">
+                    <div class="user-profile">
+                        {% if idea.author.avatar %}
+                        <img src="{{ idea.author.avatar.url }}"
+                             alt="Аватар {{ idea.author.username }}"
+                             class="user-avatar-lg">
+                        {% else %}
+                        <div class="user-avatar user-avatar-char">
+                            {{ idea.author.username|first|upper }}
+                        </div>
+                        {% endif %}
+                        <div class="user-info">
+                            <span class="user-name">{{ idea.author.username }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

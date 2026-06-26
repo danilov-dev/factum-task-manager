@@ -36,8 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'markdownx',
+
     'apps.accounts.apps.AccountsConfig',
     'apps.users.apps.UsersConfig',
+    'apps.ideas.apps.IdeasConfig',
 
 ]
 
@@ -121,3 +124,31 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Markdown settings
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.codehilite',
+    'markdown.extensions.toc',
+    'markdown.extensions.nl2br',
+    'pymdownx.tilde',
+    'pymdownx.mark',
+    'pymdownx.tasklist',
+    'pymdownx.superfences',
+]
+
+MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
+    'pymdownx.tasklist': {
+        'custom_checkbox': True,
+    },
+}
+
+MARKDOWNX_URLS_PATH = '/markdownx/markdownify/'
+MARKDOWNX_UPLOAD_URLS_PATH = '/markdownx/upload/'
+MARKDOWNX_MEDIA_PATH = 'markdownx/'
+MARKDOWNX_AUTO_RENDER = False

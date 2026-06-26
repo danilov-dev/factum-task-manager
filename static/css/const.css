@@ -46,6 +46,7 @@
 
     /* Размеры */
     --border-radius: 8px;
+    --elips-radius: 20px;
     --border-thickness: 1px;
     --input-height: 40px;
 

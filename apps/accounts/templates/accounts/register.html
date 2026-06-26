@@ -2,53 +2,45 @@
 {%block title%} SignUp {%endblock%}
 
 {% block content %}
-<div class=" input-card">
+<div class="card stack clamp-card">
     <h1>SignUp</h1>
-    <form method="post">
+    <form method="post" class="stack">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="id_username" class="form-label">Имя пользователя</label>
-            <input type="text"
-                   name="username"
-                   id="id_username"
-                   class="form-control"
-                   required
-                   autofocus
-                   autocomplete="username">
-        </div>
+        <input type="text"
+               name="username"
+               id="id_username"
+               class="form-control"
+               required
+               autofocus
+               autocomplete="username"
+               placeholder="username">
 
-        <div class="form-group">
-            <label for="id_email" class="form-label">Email</label>
-            <input type="text"
-                   name="email"
-                   id="id_email"
-                   class="form-control"
-                   required
-                   autofocus
-                   autocomplete="email">
-        </div>
+        <input type="text"
+               name="email"
+               id="id_email"
+               class="form-control"
+               required
+               autofocus
+               autocomplete="email"
+               placeholder="email">
 
-        <div class="form-group">
-            <label for="id_password1" class="form-label">Пароль</label>
-            <input type="password"
-                   name="password1"
-                   id="id_password1"
-                   class="form-control"
-                   required
-                   autocomplete="new-password">
-        </div>
+        <input type="password"
+               name="password1"
+               id="id_password1"
+               class="form-control"
+               required
+               autocomplete="new-password"
+               placeholder="password">
 
-        <div class="form-group">
-            <label for="id_password2" class="form-label">Подтверждение пароля</label>
-            <input type="password"
-                   name="password2"
-                   id="id_password2"
-                   class="form-control"
-                   required
-                   autocomplete="new-password">
-        </div>
+        <input type="password"
+               name="password2"
+               id="id_password2"
+               class="form-control"
+               required
+               autocomplete="new-password"
+               placeholder="confirm password">
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+        <button type="submit" class="btn btn-primary btn-link">Sign up</button>
     </form>
 </div>
 {% endblock %}
