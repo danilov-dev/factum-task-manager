@@ -19,8 +19,8 @@
             <div class="text-cluster">
                 {# Аватар #}
                 {% if user.avatar %}
-                <img src="{{ profile_user.avatar.url }}"
-                     alt="Аватар {{ profile_user.username }}"
+                <img src="{{ user.avatar.url }}"
+                     alt="Аватар {{ user.username }}"
                      class="user-avatar-lg">
                 {% else %}
                 <div class="user-avatar user-avatar-char">

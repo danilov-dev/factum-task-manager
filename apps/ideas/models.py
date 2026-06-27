@@ -115,7 +115,7 @@ class IdeaRole(models.Model):
     skills = models.ManyToManyField(
         'users.Skill',
         through='IdeaRoleSkill',
-        related_name='relose_necessary_this',
+        related_name='roles_necessary_this',
         verbose_name='Необходимые навыки',
     )
     count_needed = models.PositiveIntegerField(
