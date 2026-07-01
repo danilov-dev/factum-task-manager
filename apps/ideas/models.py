@@ -36,6 +36,7 @@ class Idea(models.Model):
         verbose_name='Автор',
     )
     title = models.CharField(max_length=255, verbose_name='Название')
+    about = models.CharField(max_length=250, null=True, verbose_name='Суть идеи')
     description = MarkdownxField(verbose_name='Описание')
     category = models.CharField(
         max_length=50,
