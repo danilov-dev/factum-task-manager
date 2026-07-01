@@ -859,7 +859,7 @@
 .markdown-editor__preview h2,
 .markdown-editor__preview h3 {
     border-bottom: var(--border-thickness) solid var(--border-color);
-    padding-bottom: var(--space-xs);
+    padding-bottom: var(--space-2xs);
     margin-top: var(--space-l);
     margin-bottom: var(--space-m);
     color: var(--text-primary);

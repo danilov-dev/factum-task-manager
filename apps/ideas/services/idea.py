@@ -3,11 +3,12 @@ from django.shortcuts import get_object_or_404
 from apps.ideas.models import Idea
 
 
-def create_idea(*, author, title, description, category):
+def create_idea(*, author, title,about, description, category):
     """Создать черновик идеи."""
     idea = Idea.objects.create(
         author=author,
         title=title,
+        about=about,
         description=description,
         category=category,
         status=Idea.Status.DRAFT,
@@ -16,10 +17,11 @@ def create_idea(*, author, title, description, category):
     return idea
 
 
-def update_idea(*, idea_id, title, description, category, status):
+def update_idea(*, idea_id, title, about, description, category, status):
     """Обновить существующую идею."""
     idea = get_object_or_404(Idea, pk=idea_id)
     idea.title = title
+    idea.about = about
     idea.description = description
     idea.category = category
     idea.status = status

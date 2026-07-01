@@ -9,6 +9,7 @@ class IdeaCreateForm(forms.ModelForm):
         model = Idea
         fields = (
             'title',
+            'about',
             'description',
             'category',
             'status',
@@ -19,12 +20,16 @@ class IdeaCreateForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': "idea's title",
             }),
+            'about': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': "about (< 250)",
+            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control markdown-textarea',
                 'placeholder': 'Опишите вашу идею...',
-                'rows': 200,  # Увеличиваем количество строк
-                'cols': 80,  # Увеличиваем количество колонок
-                'style': 'width: 100%; min-height: 500px;',  # Или через style
+                'rows': 200,
+                'cols': 80,
+                'style': 'width: 100%; min-height: 500px;',
             }),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),

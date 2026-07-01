@@ -51,6 +51,7 @@ def create_new_idea(request):
             idea = create_idea(
                 author=request.user,
                 title=form.cleaned_data['title'],
+                about=form.cleaned_data['about'],
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
             )
@@ -74,6 +75,7 @@ def edit_idea(request, pk):
             update_idea(
                 idea_id=pk,
                 title=form.cleaned_data['title'],
+                about=form.cleaned_data['about'],
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
                 status=form.cleaned_data['status'],

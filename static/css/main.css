@@ -133,6 +133,13 @@ input:-webkit-autofill {
     color: var(--link-color);
 }
 
+.icon-link:hover.positive{
+    color: var(--btn-primary-hover);
+}
+.icon-link:hover.negative{
+    color: var(--inactive);
+}
+
 .icon {
     width: 20px;
     height: auto;

@@ -74,55 +74,55 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        marked.setOptions({
-            breaks: true,
-            gfm: true
-        });
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function () {-->
+<!--        marked.setOptions({-->
+<!--            breaks: true,-->
+<!--            gfm: true-->
+<!--        });-->
 
-        const textarea = document.querySelector('#{{ form.description.id_for_label }}');
-        const preview = document.getElementById('markdown-preview');
+<!--        const textarea = document.querySelector('#{{ form.description.id_for_label }}');-->
+<!--        const preview = document.getElementById('markdown-preview');-->
 
-        // === Функция авто-высоты ===
-        function autoResize() {
-            // Сбрасываем высоту, чтобы получить правильный scrollHeight
-            textarea.style.height = 'auto';
-            // Устанавливаем высоту равной scrollHeight (содержимое + padding)
-            textarea.style.height = textarea.scrollHeight + 'px';
+<!--        // === Функция авто-высоты ===-->
+<!--        function autoResize() {-->
+<!--            // Сбрасываем высоту, чтобы получить правильный scrollHeight-->
+<!--            textarea.style.height = 'auto';-->
+<!--            // Устанавливаем высоту равной scrollHeight (содержимое + padding)-->
+<!--            textarea.style.height = textarea.scrollHeight + 'px';-->
 
-            // Синхронизируем высоту preview с textarea
-            const preview = document.querySelector('.markdown-editor__preview');
-            if (preview) {
-                preview.style.minHeight = textarea.scrollHeight + 'px';
-            }
-        }
+<!--            // Синхронизируем высоту preview с textarea-->
+<!--            const preview = document.querySelector('.markdown-editor__preview');-->
+<!--            if (preview) {-->
+<!--                preview.style.minHeight = textarea.scrollHeight + 'px';-->
+<!--            }-->
+<!--        }-->
 
-        // === Функция обновления preview ===
-        function updatePreview() {
-            const markdown = textarea.value;
-            if (markdown.trim() === '') {
-                preview.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Превью появится здесь...</p>';
-            } else {
-                // Парсим markdown и очищаем HTML
-                const rawHtml = marked.parse(markdown);
-                preview.innerHTML = DOMPurify.sanitize(rawHtml);
-            }
-        }
+<!--        // === Функция обновления preview ===-->
+<!--        function updatePreview() {-->
+<!--            const markdown = textarea.value;-->
+<!--            if (markdown.trim() === '') {-->
+<!--                preview.innerHTML = '<p style="color: var(&#45;&#45;text-secondary); font-style: italic;">Превью появится здесь...</p>';-->
+<!--            } else {-->
+<!--                // Парсим markdown и очищаем HTML-->
+<!--                const rawHtml = marked.parse(markdown);-->
+<!--                preview.innerHTML = DOMPurify.sanitize(rawHtml);-->
+<!--            }-->
+<!--        }-->
 
-        // === Обработчики событий ===
-        // При вводе текста
-        textarea.addEventListener('input', function () {
-            autoResize();
-            updatePreview();
-        });
+<!--        // === Обработчики событий ===-->
+<!--        // При вводе текста-->
+<!--        textarea.addEventListener('input', function () {-->
+<!--            autoResize();-->
+<!--            updatePreview();-->
+<!--        });-->
 
-        // При загрузке страницы
-        autoResize();
-        updatePreview();
+<!--        // При загрузке страницы-->
+<!--        autoResize();-->
+<!--        updatePreview();-->
 
-        // Дополнительно: при изменении размера окна
-        window.addEventListener('resize', autoResize);
-    });
-</script>
+<!--        // Дополнительно: при изменении размера окна-->
+<!--        window.addEventListener('resize', autoResize);-->
+<!--    });-->
+<!--</script>-->
 {% endblock %}
