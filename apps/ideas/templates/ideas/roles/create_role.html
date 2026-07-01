@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+
+    {{ skills_data|json_script:"skills-data" }}
+
+    <form method="post" id="role-form" class="stack">
+        {% csrf_token %}
+        <div class="card">
+            <div class="stack">{{ form.as_p }}</div>
+        </div>
+
+        <div class="card stack">
+            <div class="card-header">
+                <h5 class="mb-0">Выбранные навыки</h5>
+                <small class="text-muted">Клик по навыку — отметить обязательным/удалить</small>
+            </div>
+            <div class="card-body">
+                <div id="selected-skills" class="skills-grid selected-skills-container">
+                    <div class="text-muted text-center w-100 py-3" id="empty-msg">
+                        <i class="fas fa-arrow-up"></i> Выберите навыки из списка ниже
+                    </div>
+                </div>
+                {{ formset.management_form }}
+
+                <div id="formset-forms" style="display: none;">
+                    {% for form in formset %}
+                    {% if form.instance.pk %}
+                    <div class="formset-form"
+                         data-skill-id="{{ form.instance.skill_id }}"
+                         data-skill-name="{{ form.instance.skill.name }}"
+                         data-is-required="{{ form.instance.is_required|yesno:'true,false' }}"
+                         data-form-index="{{ forloop.counter0 }}">
+                        {{ form.id }}
+                        {{ form.skill }}
+                        {{ form.is_required }}
+                        {{ form.DELETE }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="hidden-forms"></div>
+            </div>
+        </div>
+
+        <div class="card stack">
+            <div class="card-header"><h5 class="mb-0">Добавить навык</h5></div>
+            <div class="card-body stack">
+                <select id="category" class="form-select mb-3">
+                    <option value="">Выберите категорию...</option>
+                    {% for value, label in category_choices.items %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <div id="skills-list" class="skills-grid">
+                    <div class="text-muted text-center w-100 py-3">
+                        <i class="fas fa-info-circle"></i> Выберите категорию
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-link">
+            <i class="fas fa-save"></i>
+            {% if is_edit %}Сохранить{% else %}Создать{% endif %}
+        </button>
+        <a href="{% url 'ideas:detail' pk=idea.id %}" class="btn btn-secondary btn-link">
+            <i class="fas fa-times"></i> Отмена
+        </a>
+    </form>
+</div>
+
+<style>
+    .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+        align-items: center;
+    }
+
+    .selected-skills-container {
+        min-height: 60px;
+        border: var(--border-thickness) dashed var(--border-color);
+        border-radius: var(--border-radius);
+        padding: var(--space-m);
+    }
+
+    .skill-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: var(--space-xs) var(--space-m);
+        border: var(--border-thickness) solid var(--border-color);
+        border-radius: var(--elips-radius);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: var(--fs-sm);
+        cursor: pointer;
+        user-select: none;
+        transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+        animation: chip-appear 0.2s ease;
+    }
+
+    .skill-chip:hover {
+        border-color: var(--link-hover);
+    }
+
+    .skill-chip.selected {
+        background: var(--bg-tertiary);
+        border-color: var(--link-color);
+        color: var(--text-primary);
+    }
+
+    .skill-chip.selected.required {
+        background: var(--link-color);
+        border-color: var(--link-color);
+        color: var(--bg-primary);
+    }
+
+    .skill-chip .star {
+        display: none;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        font-size: var(--fs-sm);
+        color: inherit;
+        opacity: 0.6;
+        line-height: 1;
+    }
+
+    .skill-chip.selected .star {
+        display: inline-block;
+    }
+
+    .skill-chip.selected.required .star {
+        opacity: 1;
+    }
+
+    .skill-chip .star:hover {
+        opacity: 1;
+    }
+
+    @keyframes chip-appear {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .toast {
+        position: fixed;
+        top: var(--space-xl);
+        right: var(--space-xl);
+        padding: var(--space-s) var(--space-l);
+        border: var(--border-thickness) solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-md);
+        z-index: 9999;
+        font-size: var(--fs-sm);
+        animation: chip-appear 0.3s ease;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const skillsData = JSON.parse(document.getElementById('skills-data').textContent);
+        const $ = id => document.getElementById(id);
+        const selected = $('selected-skills');
+        const emptyMsg = $('empty-msg');
+        const hiddenForms = $('hidden-forms');
+        const formsetForms = $('formset-forms');
+
+        // Счётчик новых форм = количество уже существующих (существующие + новые)
+        let newIdx = formsetForms.querySelectorAll('.formset-form').length;
+
+        // Состояние: Map<skillId, { id, name, required, isNew, formEl }>
+        const state = new Map();
+
+        const totalInput = () => document.querySelector('[name="necessary_skills-TOTAL_FORMS"]');
+        const updateTotal = () => {
+            const inp = totalInput();
+            if (inp) inp.value = state.size;
+        };
+
+        const toast = (msg) => {
+            const el = document.createElement('div');
+            el.className = 'toast';
+            el.textContent = msg;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1800);
+        };
+
+        // ---- Рендер чипа (единый для обоих контейнеров) ----
+        function renderChip(skill, {inSelected = false} = {}) {
+            const chip = document.createElement('div');
+            chip.className = 'skill-chip' + (inSelected ? ' selected' : '') + (skill.required ? ' required' : '');
+            chip.dataset.id = skill.id;
+            chip.innerHTML = `
+            <span class="name">${skill.name}</span>
+            <button type="button" class="star" title="Обязательный">★</button>
+        `;
+            return chip;
+        }
+
+        // ---- Создание скрытой формы для нового навыка ----
+        function createHiddenForm(skill) {
+            const form = document.createElement('div');
+            form.dataset.id = skill.id;
+            form.style.display = 'none';
+            form.innerHTML = `
+            <input type="hidden" name="necessary_skills-${newIdx}-skill" value="${skill.id}">
+            <input type="checkbox" name="necessary_skills-${newIdx}-is_required" class="req-check" ${skill.required ? 'checked' : ''}>
+            <input type="hidden" name="necessary_skills-${newIdx}-id">
+            <input type="hidden" name="necessary_skills-${newIdx}-DELETE">
+        `;
+            hiddenForms.appendChild(form);
+            skill.formEl = form;
+            skill.isNew = true;
+            newIdx++;
+        }
+
+        // ---- Обновление чипа в «выбранных» и синхронизация формы ----
+        function syncSelectedChip(skill) {
+            const chip = selected.querySelector(`.skill-chip[data-id="${skill.id}"]`);
+            if (!chip) return;
+            chip.classList.toggle('required', skill.required);
+
+            if (skill.isNew) {
+                const cb = skill.formEl.querySelector('.req-check');
+                if (cb) cb.checked = skill.required;
+            } else {
+                const f = formsetForms.querySelector(`.formset-form[data-skill-id="${skill.id}"]`);
+                if (f) {
+                    const cb = f.querySelector('[name$="-is_required"]');
+                    if (cb) cb.checked = skill.required;
+                }
+            }
+        }
+
+        // ---- Toggle: добавить или удалить ----
+        function toggleSkill(id) {
+            const allSkills = Object.values(skillsData).flat();
+            const skillDef = allSkills.find(s => String(s.id) === String(id));
+            if (!skillDef) return;
+
+            if (state.has(id)) {
+                // Удаляем
+                const skill = state.get(id);
+                if (!skill.isNew) {
+                    // Существующий — помечаем DELETE
+                    const f = formsetForms.querySelector(`.formset-form[data-skill-id="${id}"]`);
+                    if (f) {
+                        const del = f.querySelector('[name$="-DELETE"]');
+                        if (del) del.checked = true;
+                        f.dataset.deleted = 'true';
+                    }
+                } else {
+                    skill.formEl.remove();
+                }
+                state.delete(id);
+
+                const chip = selected.querySelector(`.skill-chip[data-id="${id}"]`);
+                if (chip) {
+                    chip.style.opacity = '0';
+                    chip.style.transform = 'scale(0.9)';
+                    setTimeout(() => chip.remove(), 180);
+                }
+
+                // Разблокируем кнопку в списке
+                const listBtn = $('skills-list').querySelector(`.skill-chip[data-id="${id}"]`);
+                if (listBtn) {
+                    listBtn.classList.remove('selected', 'required');
+                    const star = listBtn.querySelector('.star');
+                    if (star) star.style.display = 'none';
+                }
+
+                if (state.size === 0) emptyMsg.style.display = 'block';
+                toast(`«${skillDef.name}» удалён`);
+            } else {
+                // Добавляем
+                const skill = {id, name: skillDef.name, required: true};
+                state.set(id, skill);
+                emptyMsg.style.display = 'none';
+
+                const chip = renderChip(skill, {inSelected: true});
+                selected.appendChild(chip);
+
+                // Если это существующий навык из formset — найдём его форму и привяжем
+                const existingForm = formsetForms.querySelector(`.formset-form[data-skill-id="${id}"]`);
+                if (existingForm && existingForm.dataset.deleted === 'true') {
+                    // Восстанавливаем ранее удалённый
+                    const del = existingForm.querySelector('[name$="-DELETE"]');
+                    if (del) del.checked = false;
+                    delete existingForm.dataset.deleted;
+                    skill.isNew = false;
+                    skill.formEl = existingForm;
+                } else if (existingForm) {
+                    skill.isNew = false;
+                    skill.formEl = existingForm;
+                } else {
+                    createHiddenForm(skill);
+                }
+
+                // В списке делаем его «выбранным»
+                const listBtn = $('skills-list').querySelector(`.skill-chip[data-id="${id}"]`);
+                if (listBtn) listBtn.classList.add('selected');
+
+                updateTotal();
+                toast(`«${skill.name}» добавлен`);
+            }
+        }
+
+        // ---- Загрузка списка навыков категории ----
+        function loadSkills(category) {
+            const container = $('skills-list');
+            if (!category) {
+                container.innerHTML = '<div class="text-muted text-center w-100 py-3">Выберите категорию</div>';
+                return;
+            }
+            const skills = skillsData[category] || [];
+            if (!skills.length) {
+                container.innerHTML = '<div class="text-muted text-center w-100 py-3">Нет навыков</div>';
+                return;
+            }
+            container.innerHTML = '';
+            skills.forEach(s => {
+                const isSel = state.has(String(s.id));
+                const chip = renderChip({id: s.id, name: s.name, required: false}, {inSelected: isSel});
+                container.appendChild(chip);
+            });
+        }
+
+        // ---- Делегированные клики ----
+        selected.addEventListener('click', (e) => {
+            const chip = e.target.closest('.skill-chip');
+            if (!chip) return;
+            const id = chip.dataset.id;
+
+            // Клик по звезде — только переключить required (если навык выбран)
+            if (e.target.closest('.star')) {
+                e.stopPropagation();
+                const skill = state.get(id);
+                if (!skill) return;
+                skill.required = !skill.required;
+                syncSelectedChip(skill);
+                toast(skill.required ? 'Обязательный' : 'Необязательный');
+                return;
+            }
+            // Клик по самому навыку — удалить
+            toggleSkill(id);
+        });
+
+        $('skills-list').addEventListener('click', (e) => {
+            const chip = e.target.closest('.skill-chip');
+            if (!chip) return;
+            // Клик по навыку в списке — добавить
+            toggleSkill(chip.dataset.id);
+        });
+
+        $('category').addEventListener('change', e => loadSkills(e.target.value));
+
+        // ---- Инициализация: восстановить существующие навыки из formset ----
+        formsetForms.querySelectorAll('.formset-form').forEach(f => {
+            const id = f.dataset.skillId;
+            const name = f.dataset.skillName;
+            const required = f.dataset.isRequired === 'true';
+            if (!id || !name) return;
+            state.set(id, {id, name, required, isNew: false, formEl: f});
+
+            const chip = renderChip({id, name, required}, {inSelected: true});
+            selected.appendChild(chip);
+        });
+        if (state.size > 0) emptyMsg.style.display = 'none';
+
+        // TOTAL_FORMS
+        if (!totalInput()) {
+            const inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'necessary_skills-TOTAL_FORMS';
+            hiddenForms.parentNode.insertBefore(inp, hiddenForms);
+        }
+        updateTotal();
+
+        // Авто-загрузка первой категории
+        const firstOpt = $('category').querySelector('option:not([value=""])');
+        if (firstOpt) {
+            $('category').value = firstOpt.value;
+            loadSkills(firstOpt.value);
+        }
+    });
+</script>
+{% endblock %}

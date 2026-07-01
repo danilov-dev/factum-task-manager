@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="stack" style="padding: var(--space-2xl) 0;">
+
+        <!-- Хлебные крошки -->
+        <nav class="breadcrumb">
+            <a href="{% url 'ideas:idea_list' %}"
+               title="Идеи">Идеи</a>
+            <a href="{% url 'ideas:detail' pk=role.idea.id %}"
+               title="{{ role.idea.title }}"> {{ role.idea.title|truncatechars:25 }} </a>
+            <a href="{%url 'ideas:roles:role_list' idea_id=role.idea.id%}">Роли</a>
+            <span>{{ role.title }}</span>
+        </nav>
+
+        <!-- Заголовок с действиями -->
+        <div class="card-header-block">
+            <div class="card-header-block__title">
+                <h1>{{ role.title }}</h1>
+            </div>
+            {%if user != role.idea.author%}
+            <div class="card-header-block__actions">
+                <a href="{% url 'ideas:responses:create' role_id=role.pk%}" class="btn btn-primary">
+                    Откликнуться
+                </a>
+            </div>
+            {%endif%}
+        </div>
+
+        <!-- Основная информация -->
+        <div class="asymmetric-grid">
+            <!-- Левая колонка: описание и навыки -->
+            <div class="stack">
+                <!-- Описание роли -->
+                <div class="card">
+                    <div class="stack" style="gap: var(--space-m);">
+                        <h2 class="card-title">Описание</h2>
+                        <div class="text-block" style="margin: 0; padding: 0;">
+                            <p>{{ role.description|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Необходимые навыки -->
+                <div class="card">
+                    <div class="stack" style="gap: var(--space-m);">
+                        <div class="grid-title">
+                            <h2 class="card-title">Необходимые навыки</h2>
+                            <span class="status-badge status-open">
+                                {{ role.necessary_skills.all|length }} навыков
+                            </span>
+                        </div>
+
+                        {% if role.necessary_skills.all %}
+                        <div class="tag-group">
+                            {% for role_skill in role.necessary_skills.all %}
+                            <span class="tag">
+                                        {{ role_skill.skill.name }}
+                                    </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert">
+                            <p style="margin: 0; color: var(--text-secondary);">
+                                Навыки не найдены
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Детальная таблица навыков -->
+                {% if role.necessary_skills.all %}
+                <div class="card">
+                    <h2 class="card-title" style="margin-bottom: var(--space-l);">
+                        Детали навыков
+                    </h2>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Навык</th>
+                                <th>Уровень</th>
+                                <th>Приоритет</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for role_skill in role.necessary_skills.all %}
+                            <tr>
+                                <td>
+                                    <a href="#" class="table-link">
+                                        {{ role_skill.skill.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-open">
+                                            {{ role_skill.level|default:"Не указан" }}
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="status-badge status-draft">
+                                            {{ role_skill.priority|default:"Обычный" }}
+                                        </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Правая колонка: статистика и доп. информация -->
+            <div class="stack">
+                <!-- Статистика -->
+                <div class="sidebar-panel">
+                    <h3>Статистика</h3>
+                    <div class="statistics" style="padding: var(--space-l) 0; border: none;">
+                        <div>
+                            <span class="stat-value">
+                                {{ role.necessary_skills.all|length }}
+                            </span>
+                            <span class="stat-label">Навыков</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Дополнительная информация -->
+                <div class="sidebar-panel">
+                    <h3>Информация</h3>
+                    <div class="divided-list">
+                        <div class="divided-list-item">
+                            <span class="subtitle">ID роли</span>
+                            <strong>{{ role.pk }}</strong>
+                        </div>
+                        <div class="divided-list-item">
+                            <span class="subtitle">Дата создания</span>
+                            <strong>{{ role.created_at|date:"d.m.Y" }}</strong>
+                        </div>
+                        <div class="divided-list-item">
+                            <span class="subtitle">Последнее обновление</span>
+                            <strong>{{ role.updated_at|date:"d.m.Y H:i" }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Быстрые действия -->
+                {%if user == role.idea.author%}
+                <div class="sidebar-panel">
+                    <h3>Действия</h3>
+                    <div class="stack" style="gap: var(--space-xs);">
+                        <a href="{% url 'ideas:roles:edit' role_id=role.pk %}" class="btn btn-primary"
+                           style="width: 100%;">
+                            Редактировать роль
+                        </a>
+                        <a href="{% url 'ideas:roles:delete_role' role_id=role.pk %}" class="btn"
+                           style="width: 100%; color: var(--inactive);">
+                            Удалить
+                        </a>
+                    </div>
+                </div>
+                {%endif%}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

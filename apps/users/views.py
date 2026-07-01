@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
 
-from apps.ideas.services import get_user_ideas
+from apps.ideas.services.idea import get_user_ideas
 from apps.users.models import User
 
 

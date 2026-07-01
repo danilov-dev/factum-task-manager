@@ -67,6 +67,7 @@ def get_ideas_by_category(category: str):
     """Возвращает идеи по категории."""
     return get_visible_ideas().filter(category=category)
 
+
 def get_user_ideas(user, viewer=None):
     """Идеи пользователя с учётом прав просмотра."""
     qs = user.ideas.all()

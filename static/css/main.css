@@ -4,6 +4,7 @@
 @import url(toast-message.css);
 @import url(compositions.css);
 @import url(primitives.css);
+@import url(last_main.css);
 
 body {
     background: var(--bg-primary);
@@ -95,7 +96,7 @@ input:-webkit-autofill {
 
 .card-header-block__title {
     flex: 1 1 auto;
-    min-width: 0; /* КЛЮЧЕВОЕ! Позволяет тексту обрезаться */
+    min-width: 0;
     font-size: var(--fs-2xl);
     font-weight: var(--fw-bold);
     color: var(--text-primary);
@@ -106,9 +107,9 @@ input:-webkit-autofill {
 
 .card-header-block__actions {
     display: flex;
-    flex-wrap: nowrap; /* Кнопки НИКОГДА не переносятся */
+    flex-wrap: nowrap;
     gap: var(--space-xs);
-    flex-shrink: 0; /* Блок с кнопками не сжимается */
+    flex-shrink: 0;
 }
 
 .card-header-block__actions .btn {
@@ -146,12 +147,12 @@ input:-webkit-autofill {
     transition: background 0.2s;
 }
 
-.divided-list-item:hover {
-    background: var(--bg-tertiary);
-    padding-inline: var(--space-xs);
-    margin-inline: calc(-1 * var(--space-xs));
-    border-radius: var(--border-radius);
-}
+/*.divided-list-item:hover {*/
+/*    background: var(--bg-tertiary);*/
+/*    padding-inline: var(--space-xs);*/
+/*    margin-inline: calc(-1 * var(--space-xs));*/
+/*    border-radius: var(--border-radius);*/
+/*}*/
 
 .sidebar-panel h3 {
     display: flex;
@@ -284,6 +285,24 @@ input:-webkit-autofill {
     border-color: #5a2d2d;
 }
 
+.status-pending {
+    background: #3a2a1a;
+    color: #f5b342;
+    border-color: #7a5a2d;
+}
+
+.status-approved {
+    background: #1a3a2a;
+    color: #58d68d;
+    border-color: #2d6a4f;
+}
+
+.status-rejected {
+    background: #2a1a1a;
+    color: #e74c3c;
+    border-color: #5a2d2d;
+}
+
 /* Маленькие кнопки */
 .btn-sm {
     display: inline-flex;
@@ -322,7 +341,7 @@ input:-webkit-autofill {
     border-color: var(--border-color);
 }
 
-/* Основные кнопки (если нет в других файлах) */
+/* Основные кнопки*/
 .btn {
     display: inline-flex;
     align-items: center;
@@ -351,7 +370,7 @@ input:-webkit-autofill {
     color: #fff;
 }
 
-.django-ckeditor-widget{
+.django-ckeditor-widget {
     width: 600px;
 }
 

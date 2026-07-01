@@ -46,10 +46,10 @@
     transition: border-color 0.2s, transform 0.2s;
 }
 
-.card:hover {
-    border-color: var(--link-color);
-    transform: translateY(-2px);
-}
+/*.card:hover {*/
+/*    border-color: var(--link-color);*/
+/*    transform: translateY(-2px);*/
+/*}*/
 
 .card-title {
     font-size: var(--fs-lg);
@@ -119,6 +119,11 @@
 }
 
 .nav-bar a:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--link-color);
+}
+
+.nav-bar a.active-link {
     color: var(--text-primary);
     border-bottom-color: var(--link-color);
 }
@@ -806,7 +811,7 @@
 .markdown-editor__input {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Важно! Позволяет контейнеру сжиматься */
+    min-width: 0;
     width: 100%;
 }
 
@@ -839,75 +844,176 @@
     border-radius: var(--border-radius);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-wrap: break-word; /* Перенос слов */
-    word-wrap: break-word; /* Для старых браузеров */
-    word-break: break-word; /* Перенос длинных слов */
-    overflow-x: hidden; /* Скрываем горизонтальный скролл */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
-    min-width: 0; /* Важно! Позволяет контейнеру сжиматься */
+    min-width: 0;
     width: 100%;
 }
 
-/* Стили для содержимого preview */
+/* ===== ЗАГОЛОВКИ ===== */
 .markdown-editor__preview h1,
 .markdown-editor__preview h2,
 .markdown-editor__preview h3 {
     border-bottom: var(--border-thickness) solid var(--border-color);
     padding-bottom: var(--space-xs);
     margin-top: var(--space-l);
+    margin-bottom: var(--space-m);
+    color: var(--text-primary);
 }
 
+.markdown-editor__preview h1 {
+    font-size: var(--fs-2xl);
+}
+
+.markdown-editor__preview h2 {
+    font-size: var(--fs-xl);
+}
+
+.markdown-editor__preview h3 {
+    font-size: var(--fs-lg);
+}
+
+/* ===== КОД ===== */
 .markdown-editor__preview code {
     background: var(--bg-tertiary);
     padding: var(--space-3xs) var(--space-2xs);
     border-radius: var(--border-radius);
     font-size: var(--fs-sm);
-    word-break: break-all; /* Перенос длинных строк кода */
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    word-break: break-all;
 }
 
 .markdown-editor__preview pre {
     background: var(--bg-tertiary);
     padding: var(--space-m);
     border-radius: var(--border-radius);
-    overflow-x: auto; /* Скролл для кода, чтобы не ломался */
-    white-space: pre-wrap; /* Перенос длинных строк в pre */
+    overflow-x: auto;
+    white-space: pre-wrap;
     word-break: break-all;
-    max-width: 100%; /* Ограничиваем ширину */
+    max-width: 100%;
+    margin-bottom: var(--space-m);
 }
 
+.markdown-editor__preview pre code {
+    background: none;
+    padding: 0;
+}
+
+/* ===== ЦИТАТЫ ===== */
 .markdown-editor__preview blockquote {
     border-left: 4px solid var(--link-color);
-    padding-left: var(--space-m);
+    padding: var(--space-xs) var(--space-m);
     color: var(--text-secondary);
     margin: var(--space-m) 0;
+    background: var(--bg-tertiary);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
+.markdown-editor__preview blockquote p {
+    margin-bottom: 0;
+}
+
+/* ===== ССЫЛКИ ===== */
 .markdown-editor__preview a {
     color: var(--link-color);
-    word-break: break-all; /* Перенос длинных URL */
+    word-break: break-all;
+    text-decoration: none;
 }
 
 .markdown-editor__preview a:hover {
     color: var(--link-hover);
+    text-decoration: underline;
 }
 
+/* ===== ПРОЧЕЕ ===== */
 .markdown-editor__preview del {
     color: var(--text-secondary);
+}
+
+.markdown-editor__preview strong {
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
 }
 
 .markdown-editor__preview img {
     max-width: 100%;
     border-radius: var(--border-radius);
+    margin: var(--space-m) 0;
 }
 
+.markdown-editor__preview hr {
+    border: none;
+    border-top: var(--border-thickness) solid var(--border-color);
+    margin: var(--space-l) 0;
+}
+
+/* ===== 🔑 СПИСКИ (КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ) ===== */
 .markdown-editor__preview ul,
 .markdown-editor__preview ol {
     padding-left: var(--space-xl);
+    margin-bottom: var(--space-m);
+    color: var(--text-primary);
+}
+
+.markdown-editor__preview ul {
+    list-style-type: disc !important;
+}
+
+.markdown-editor__preview ol {
+    list-style-type: decimal !important;
+}
+
+/* Вложенные списки */
+.markdown-editor__preview ul ul {
+    list-style-type: circle !important;
+}
+
+.markdown-editor__preview ul ul ul {
+    list-style-type: square !important;
+}
+
+.markdown-editor__preview ol ol {
+    list-style-type: lower-alpha !important;
+}
+
+/* 🔑 САМОЕ ГЛАВНОЕ: принудительно возвращаем display для li */
+.markdown-editor__preview li {
+    display: list-item !important;
+    margin-bottom: var(--space-2xs);
+    line-height: 1.6;
+    list-style-position: outside;
 }
 
 .markdown-editor__preview p {
     word-break: break-word;
+    margin-bottom: var(--space-m);
+}
+
+.markdown-editor__preview p:last-child {
+    margin-bottom: 0;
+}
+
+/* ===== ТАБЛИЦЫ ===== */
+.markdown-editor__preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-m);
+}
+
+.markdown-editor__preview table th,
+.markdown-editor__preview table td {
+    border: var(--border-thickness) solid var(--border-color);
+    padding: var(--space-xs) var(--space-m);
+    text-align: left;
+}
+
+.markdown-editor__preview table th {
+    background: var(--bg-tertiary);
+    font-weight: var(--fw-medium);
 }
 
 /* Адаптив: на мобильных — в столбик */

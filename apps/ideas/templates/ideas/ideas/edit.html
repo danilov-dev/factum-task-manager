@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать: {{ idea.title }}{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <nav class="breadcrumb">
+        <a href="{% url 'ideas:idea_list' %}">Идеи</a>
+        <a href="{% url 'ideas:detail' pk=idea.pk %}">{{ idea.title }}</a>
+        <span>Редактировать</span>
+    </nav>
+
+    <h1>Редактировать: {{ idea.title }}</h1>
+
+    <form method="post" class="stack" style="max-width: 1200px;">
+        {% csrf_token %}
+
+        <div class="form-field">
+            <label for="{{ form.title.id_for_label }}">Название</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+            <div class="alert alert-error">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            <label>Описание (Markdown)</label>
+
+            <div class="markdown-editor">
+                <div class="markdown-editor__input">
+                    {{ form.description }}
+                </div>
+                <div class="markdown-editor__preview" id="markdown-preview">
+                    <p style="color: var(--text-secondary); font-style: italic;">
+                        Превью появится здесь...
+                    </p>
+                </div>
+            </div>
+
+            {% if form.description.errors %}
+            <div class="alert alert-error">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="form-field">
+                <label for="{{ form.category.id_for_label }}">Категория</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                <div class="alert alert-error">{{ form.category.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.status.id_for_label }}">Статус</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                <div class="alert alert-error">{{ form.status.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit">Сохранить</button>
+            <a href="{% url 'ideas:roles:create_role' pk=idea.pk %}">Add role</a>
+            <a href="{% url 'ideas:detail' pk=idea.pk %}">Отмена</a>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+
+        const textarea = document.querySelector('#{{ form.description.id_for_label }}');
+        const preview = document.getElementById('markdown-preview');
+
+        // === Функция авто-высоты ===
+        function autoResize() {
+            // Сбрасываем высоту, чтобы получить правильный scrollHeight
+            textarea.style.height = 'auto';
+            // Устанавливаем высоту равной scrollHeight (содержимое + padding)
+            textarea.style.height = textarea.scrollHeight + 'px';
+
+            // Синхронизируем высоту preview с textarea
+            const preview = document.querySelector('.markdown-editor__preview');
+            if (preview) {
+                preview.style.minHeight = textarea.scrollHeight + 'px';
+            }
+        }
+
+        // === Функция обновления preview ===
+        function updatePreview() {
+            const markdown = textarea.value;
+            if (markdown.trim() === '') {
+                preview.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">Превью появится здесь...</p>';
+            } else {
+                // Парсим markdown и очищаем HTML
+                const rawHtml = marked.parse(markdown);
+                preview.innerHTML = DOMPurify.sanitize(rawHtml);
+            }
+        }
+
+        // === Обработчики событий ===
+        // При вводе текста
+        textarea.addEventListener('input', function () {
+            autoResize();
+            updatePreview();
+        });
+
+        // При загрузке страницы
+        autoResize();
+        updatePreview();
+
+        // Дополнительно: при изменении размера окна
+        window.addEventListener('resize', autoResize);
+    });
+</script>
+{% endblock %}
