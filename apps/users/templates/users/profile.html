@@ -25,6 +25,8 @@
         {% endif %}
         {% if is_own_profile %}
         <a href="#" class="btn-link">Редактировать</a>
+        <a href="{% url 'ideas:responses:my_responses' %}" class="btn-link">Мои отклики</a>
+
         {% endif %}
     </div>
     <div class="stack">

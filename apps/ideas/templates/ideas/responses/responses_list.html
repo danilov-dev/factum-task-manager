@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %} {% if idea %}Отклики на идею{% else %}Мои отклики{% endif %} {% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 20px;">
+
+    <!-- Хлебные крошки / Заголовок -->
+    <div class="breadcrumb">
+        {% if idea %}
+        <a href="{% url 'ideas:detail' pk=idea.id %}">{{ idea.title|truncatechars:30 }}</a>
+        <span>Отклики</span>
+        {% else %}
+        <a href="{% url 'users:profile' username=user.username %}">Профиль</a>
+        <span>Отклики</span>
+        {% endif %}
+    </div>
+
+    <!-- Вкладки (Табы) с фильтрацией -->
+    <div class="tab-bar" style="margin-bottom: 20px;">
+        <div class="tab-item-wrapper {% if current_status == 'pending' %}active{% endif %}">
+            <a href="?status=pending" class="tab-item ">
+                Ожидают решения ({{ counts.pending }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'approved' %}active{% endif %}">
+            <a href="?status=approved" class="tab-item ">
+                Принятые ({{ counts.approved }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'rejected' %}active{% endif %}">
+            <a href="?status=rejected" class="tab-item ">
+                Отклоненные ({{ counts.rejected }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'all' %}active{% endif %}">
+            <a href="?status=all" class="tab-item ">
+                Все ({{ counts.all }})
+            </a>
+        </div>
+    </div>
+
+    <!-- Таблица откликов -->
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+            <tr>
+                {% if not idea %}
+                <th>Проект</th>
+                {% endif %}
+                <th>Роль</th>
+                <th>Пользователь</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Сообщение</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for response in responses %}
+            <tr>
+                {% if not idea %}
+                <td>
+                    <a href="{% url 'ideas:detail' pk=response.role.idea.id %}" class="table-link">
+                        {{ response.role.idea.title|truncatechars:25 }}
+                    </a>
+                </td>
+                {% endif %}
+
+                <td>
+                    <a href="{% url 'ideas:roles:detail' role_id=response.role.id %}" class="table-link">
+                        {{ response.role.title }}
+                    </a>
+
+                </td>
+
+                <td>
+                    <a href="{% url 'users:profile' username=response.user.username %}" class="table-link">
+                        {{ response.user.username }}
+                    </a>
+                </td>
+
+                <td>
+                    <div class="status-badge status-{{ response.status }}">
+                        <p>{{ response.get_status_display }}</p>
+                    </div>
+                </td>
+
+                <td>{{ response.created_at|date:"d.m.Y" }}</td>
+
+                <td>
+                    <div class="expandable-text" title="Нажмите, чтобы развернуть">
+                        {{ response.message|default:"—" }}
+                    </div>
+                </td>
+
+                <!-- БЛОК ДЕЙСТВИЙ -->
+                <td>
+                    {% if user == idea.author and response.status == 'pending' %}
+                    <div style="display: flex; gap: 8px;">
+                        <!-- Форма для принятия -->
+                        <form action="{% url 'ideas:responses:approve' response_id=response.id %}" method="post"
+                              style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-primary">Принять</button>
+                        </form>
+
+                        <!-- Форма для отклонения -->
+                        <form action="{% url 'ideas:responses:reject' response_id=response.id %}" method="post"
+                              style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm"
+                                    style="color: var(--inactive); border-color: var(--inactive);">
+                                Отклонить
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="{% if not idea %}7{% else %}6{% endif %}"
+                    style="text-align: center; color: var(--text-secondary); padding: 30px;">
+                    Нет откликов
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

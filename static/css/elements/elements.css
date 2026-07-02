@@ -1,0 +1,38 @@
+/* ===== БАЗОВЫЕ СТИЛИ ТЕМ ===== */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+header {
+    padding: var(--container-padding);
+    border-bottom: var(--border-thickness) solid var(--border-color);
+}
+
+/* ===== ФОРМЫ ===== */
+input,
+textarea,
+select {
+    padding: 0 var(--space-m);
+    background: none;
+    border: var(--border-thickness) solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+select option {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+input:-webkit-autofill {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--text-primary);
+}
+
+/* ===== ОТЛАДКА ===== */
+.debug-layout * {
+    outline: var(--border-thickness) solid rgba(255, 0, 0, 0.3);
+    background: rgba(0, 0, 255, 0.05) !important;
+}

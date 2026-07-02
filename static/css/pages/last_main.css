@@ -1,0 +1,134 @@
+/* ===== СПИСОК РОЛЕЙ ===== */
+.role-list-item {
+    padding: var(--space-m);
+    border-bottom: var(--border-thickness) solid var(--border-color);
+    justify-content: space-between;
+}
+
+/* ===== ТЕГИ НАВЫКОВ ===== */
+.skill-tag {
+    padding: var(--space-xs);
+    border: var(--border-thickness) solid var(--border-color);
+    border-radius: var(--elips-radius);
+}
+
+.tag-board {
+    margin-top: var(--space-m);
+}
+
+/* ===== ДОСКА ИДЕЙ ===== */
+.idea-list-board {
+    border: var(--border-thickness) solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--space-m);
+}
+
+.idea-item {
+    display: flex;
+    gap: var(--space-m);
+    justify-content: space-between;
+    padding: var(--space-s) var(--space-xs);
+}
+
+.idea-item-content {
+    gap: var(--space-xs);
+}
+
+.idea-item-btn {
+    min-width: 300px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-xs);
+}
+
+.idea-info-block {
+    display: flex;
+    gap: var(--space-l);
+}
+
+.idea-title-link {
+    color: var(--link-color);
+}
+
+.idea-title-link:hover {
+    text-decoration: underline;
+}
+
+.idea-item-about {
+    max-width: 900px;
+    display: flex;
+}
+
+.tag-item {
+    display: flex;
+    gap: var(--space-2xs);
+}
+
+/* ===== СЧЁТЧИК СИМВОЛОВ ===== */
+.char-counter {
+    font-size: 0.85em;
+    color: var(--text-tertiary);
+    margin-top: var(--space-2xs);
+    text-align: right;
+}
+
+.char-counter .over-limit {
+    color: var(--color-danger);
+}
+
+/* ===== БЛОКИ ===== */
+.title-box {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    justify-content: space-between;
+    align-content: center;
+}
+
+.link-box {
+    border: var(--border-thickness) solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--space-xs);
+}
+
+/* ===== РАЗВОРАЧИВАЕМЫЙ ТЕКСТ ===== */
+.expandable-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    word-break: break-word;
+}
+
+.expandable-text.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+}
+
+.expandable-text:hover {
+    border-bottom: 2px solid var(--link-color);
+}
+
+.expandable-text::after {
+    content: '⌄';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: var(--fs-xl);
+    color: var(--link-color);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.expandable-text:hover::after {
+    opacity: 1;
+}
+
+.expandable-text.expanded::after {
+    content: '⌃';
+}

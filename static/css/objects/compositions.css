@@ -1,7 +1,6 @@
-/* ===== ТОПОВЫЕ КОМПОЗИЦИИ ===== */
-/* Стиль: минималистичный, строгий, как в популярных dev-платформах */
+/* ===== КОМПОЗИЦИИ ===== */
 
-/* 1. Главный экран (Hero) */
+/* 1. Hero */
 .hero {
     display: grid;
     place-items: center;
@@ -38,31 +37,12 @@
     padding: var(--space-2xl) 0;
 }
 
-.card {
-    padding: var(--space-l);
-    background: var(--bg-secondary);
-    border-radius: var(--border-radius);
-    border: var(--border-thickness) solid var(--border-color);
-    transition: border-color 0.2s, transform 0.2s;
-}
-
-.card:hover {
-    border-color: var(--link-color);
-    transform: translateY(-2px);
-}
-
-.card-title {
-    font-size: var(--fs-lg);
-    font-weight: var(--fw-bold);
-    margin-bottom: var(--space-xs);
-}
-
 .card-description {
     color: var(--text-secondary);
     font-size: var(--fs-sm);
 }
 
-/* 3. Призыв к действию (CTA) */
+/* 3. CTA */
 .cta {
     display: flex;
     flex-direction: column;
@@ -91,7 +71,7 @@
     justify-content: center;
 }
 
-/* 4. Горизонтальная навигация */
+/* 4. Навигация */
 .nav-bar {
     display: flex;
     flex-wrap: wrap;
@@ -119,6 +99,11 @@
 }
 
 .nav-bar a:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--link-color);
+}
+
+.nav-bar a.active-link {
     color: var(--text-primary);
     border-bottom-color: var(--link-color);
 }
@@ -181,7 +166,7 @@
     color: var(--text-primary);
 }
 
-/* 7. Преимущества/фичи */
+/* 7. Фичи */
 .features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
@@ -217,7 +202,7 @@
     padding: var(--space-l);
     background: var(--bg-secondary);
     border-radius: var(--border-radius);
-    border-left: 4px solid var(--link-color);
+    border-left: var(--border-width-lg) solid var(--link-color);
 }
 
 .quote-text {
@@ -245,12 +230,6 @@
 .divided-list > * + * {
     border-top: var(--border-thickness) solid var(--border-color);
     padding-top: var(--space-m);
-}
-
-.divided-list-item {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
 }
 
 /* 10. Горизонтальный скролл */
@@ -495,6 +474,17 @@
     border-bottom: 2px solid var(--link-color);
 }
 
+.tab-item-wrapper{
+    padding: var(--space-xs) 0;
+
+}
+
+.tab-item-wrapper.active {
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--link-color);
+    transition: all 0.2s;
+}
+
 /* 19. Шапка сайта */
 .site-header {
     display: flex;
@@ -708,20 +698,11 @@
     border: var(--border-thickness) solid var(--border-color);
 }
 
-.sidebar-panel h3 {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-bold);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-secondary);
-    margin-bottom: var(--space-m);
-}
-
 /* 27. Уведомления */
 .alert {
     padding: var(--space-m) var(--space-l);
     border-radius: var(--border-radius);
-    border-left: 4px solid var(--link-color);
+    border-left: var(--border-width-lg) solid var(--link-color);
     background: var(--bg-secondary);
     margin-bottom: var(--space-m);
 }
@@ -735,7 +716,7 @@
 }
 
 .alert-warning {
-    border-left-color: #d29922;
+    border-left-color: var(--color-warning-dark);
 }
 
 /* 28. Кнопки в ряд */
@@ -746,7 +727,7 @@
     align-items: center;
 }
 
-/* 29. Сетка с отступами */
+/* 29. Утилиты сетки */
 .grid-gap {
     display: grid;
     gap: var(--grid-gap);
@@ -782,7 +763,7 @@
     }
 }
 
-/* 30. Центрирование контента */
+/* 30. Центрирование */
 .centered {
     display: flex;
     flex-direction: column;
@@ -794,7 +775,7 @@
     padding: var(--space-2xl) var(--container-padding);
 }
 
-/* ===== MARKDOWN EDITOR (явная разметка) ===== */
+/* ===== MARKDOWN EDITOR ===== */
 .markdown-editor {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -806,7 +787,7 @@
 .markdown-editor__input {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Важно! Позволяет контейнеру сжиматься */
+    min-width: 0;
     width: 100%;
 }
 
@@ -839,78 +820,176 @@
     border-radius: var(--border-radius);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-wrap: break-word; /* Перенос слов */
-    word-wrap: break-word; /* Для старых браузеров */
-    word-break: break-word; /* Перенос длинных слов */
-    overflow-x: hidden; /* Скрываем горизонтальный скролл */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
-    min-width: 0; /* Важно! Позволяет контейнеру сжиматься */
+    min-width: 0;
     width: 100%;
 }
 
-/* Стили для содержимого preview */
+/* Markdown: заголовки */
 .markdown-editor__preview h1,
 .markdown-editor__preview h2,
 .markdown-editor__preview h3 {
     border-bottom: var(--border-thickness) solid var(--border-color);
-    padding-bottom: var(--space-xs);
+    padding-bottom: var(--space-2xs);
     margin-top: var(--space-l);
+    margin-bottom: var(--space-m);
+    color: var(--text-primary);
 }
 
+.markdown-editor__preview h1 {
+    font-size: var(--fs-2xl);
+}
+
+.markdown-editor__preview h2 {
+    font-size: var(--fs-xl);
+}
+
+.markdown-editor__preview h3 {
+    font-size: var(--fs-lg);
+}
+
+/* Markdown: код */
 .markdown-editor__preview code {
     background: var(--bg-tertiary);
     padding: var(--space-3xs) var(--space-2xs);
     border-radius: var(--border-radius);
     font-size: var(--fs-sm);
-    word-break: break-all; /* Перенос длинных строк кода */
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    word-break: break-all;
 }
 
 .markdown-editor__preview pre {
     background: var(--bg-tertiary);
     padding: var(--space-m);
     border-radius: var(--border-radius);
-    overflow-x: auto; /* Скролл для кода, чтобы не ломался */
-    white-space: pre-wrap; /* Перенос длинных строк в pre */
+    overflow-x: auto;
+    white-space: pre-wrap;
     word-break: break-all;
-    max-width: 100%; /* Ограничиваем ширину */
+    max-width: 100%;
+    margin-bottom: var(--space-m);
 }
 
+.markdown-editor__preview pre code {
+    background: none;
+    padding: 0;
+}
+
+/* Markdown: цитаты */
 .markdown-editor__preview blockquote {
-    border-left: 4px solid var(--link-color);
-    padding-left: var(--space-m);
+    border-left: var(--border-width-lg) solid var(--link-color);
+    padding: var(--space-xs) var(--space-m);
     color: var(--text-secondary);
     margin: var(--space-m) 0;
+    background: var(--bg-tertiary);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
+.markdown-editor__preview blockquote p {
+    margin-bottom: 0;
+}
+
+/* Markdown: ссылки */
 .markdown-editor__preview a {
     color: var(--link-color);
-    word-break: break-all; /* Перенос длинных URL */
+    word-break: break-all;
+    text-decoration: none;
 }
 
 .markdown-editor__preview a:hover {
     color: var(--link-hover);
+    text-decoration: underline;
 }
 
+/* Markdown: прочее */
 .markdown-editor__preview del {
     color: var(--text-secondary);
+}
+
+.markdown-editor__preview strong {
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
 }
 
 .markdown-editor__preview img {
     max-width: 100%;
     border-radius: var(--border-radius);
+    margin: var(--space-m) 0;
 }
 
+.markdown-editor__preview hr {
+    border: none;
+    border-top: var(--border-thickness) solid var(--border-color);
+    margin: var(--space-l) 0;
+}
+
+/* Markdown: списки (возвращаем list-style поверх reset) */
 .markdown-editor__preview ul,
 .markdown-editor__preview ol {
     padding-left: var(--space-xl);
+    margin-bottom: var(--space-m);
+    color: var(--text-primary);
+}
+
+.markdown-editor__preview ul {
+    list-style-type: disc !important;
+}
+
+.markdown-editor__preview ol {
+    list-style-type: decimal !important;
+}
+
+.markdown-editor__preview ul ul {
+    list-style-type: circle !important;
+}
+
+.markdown-editor__preview ul ul ul {
+    list-style-type: square !important;
+}
+
+.markdown-editor__preview ol ol {
+    list-style-type: lower-alpha !important;
+}
+
+.markdown-editor__preview li {
+    display: list-item !important;
+    margin-bottom: var(--space-2xs);
+    line-height: 1.6;
+    list-style-position: outside;
 }
 
 .markdown-editor__preview p {
     word-break: break-word;
+    margin-bottom: var(--space-m);
 }
 
-/* Адаптив: на мобильных — в столбик */
+.markdown-editor__preview p:last-child {
+    margin-bottom: 0;
+}
+
+/* Markdown: таблицы */
+.markdown-editor__preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-m);
+}
+
+.markdown-editor__preview table th,
+.markdown-editor__preview table td {
+    border: var(--border-thickness) solid var(--border-color);
+    padding: var(--space-xs) var(--space-m);
+    text-align: left;
+}
+
+.markdown-editor__preview table th {
+    background: var(--bg-tertiary);
+    font-weight: var(--fw-medium);
+}
+
 @media (max-width: 768px) {
     .markdown-editor {
         grid-template-columns: 1fr;

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{%block title%} IDEAS {%endblock%}
+
+{% block content %}
+<div class="stack">
+    <div class="title">
+        <h1>IDEAS</h1>
+    </div>
+    <div class="divided-list idea-list-board">
+        {% for idea in ideas %}
+
+            {% include 'partials/_idea_list_item.html' with idea=idea%}
+
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

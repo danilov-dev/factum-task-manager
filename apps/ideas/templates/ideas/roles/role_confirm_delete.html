@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Удаление роли</h1>
+    
+    <div class="alert alert-danger">
+        <p>Вы уверены, что хотите удалить роль "{{ role.title }}"?</p>
+        <p>Инициатива: {{ role.idea.title }}</p>
+        
+        {% if role.responses.exists %}
+            <div class="warning">
+                <p>⚠️ Внимание! На эту роль есть отклики ({{ role.responses.count }} шт.)</p>
+                <p>При удалении роли все связанные отклики также будут удалены.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+            <a href="{% url 'ideas:detail' pk=role.idea.id %}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -36,6 +36,7 @@ class Idea(models.Model):
         verbose_name='Автор',
     )
     title = models.CharField(max_length=255, verbose_name='Название')
+    about = models.CharField(max_length=250, null=True, verbose_name='Суть идеи')
     description = MarkdownxField(verbose_name='Описание')
     category = models.CharField(
         max_length=50,
@@ -115,7 +116,7 @@ class IdeaRole(models.Model):
     skills = models.ManyToManyField(
         'users.Skill',
         through='IdeaRoleSkill',
-        related_name='relose_necessary_this',
+        related_name='roles_necessary_this',
         verbose_name='Необходимые навыки',
     )
     count_needed = models.PositiveIntegerField(
@@ -150,7 +151,9 @@ class IdeaRole(models.Model):
 
     @property
     def required_skills(self):
-        return self.skills.filter(role_skill__is_required=True)
+        return self.skills.filter(necessary_in_roles__is_required=True)
+
+
 
     def close_if_full(self):
         """Закрыть набор, если все места заняты."""
@@ -239,6 +242,20 @@ class IdeaResponse(models.Model):
         auto_now=True,
         verbose_name='Обновлен',
     )
+
+    @classmethod
+    def get_pending_response(cls, user=None, role=None, idea=None):
+        """Получить отклики на рассмотрении с фильтрацией"""
+        queryset = cls.objects.filter(status=cls.Status.PENDING)
+
+        if user:
+            queryset = queryset.filter(user=user)
+        if role:
+            queryset = queryset.filter(role=role)
+        if idea:
+            queryset = queryset.filter(idea=idea)
+
+        return queryset
 
     class Meta:
         ordering = ['-created_at']

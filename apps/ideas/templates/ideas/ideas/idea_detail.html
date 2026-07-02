@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block title %}{{ idea.title }}{% endblock %}
+{% load static %}
+{% load markdown_tags %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="{% url 'ideas:idea_list' %}">Идеи</a>
+        <span>{{ idea.title }}</span>
+    </nav>
+
+    <!-- HEADER BLOCK -->
+    <header class="card-header-block grid-title">
+        <div class="cluster">
+            {%if user == idea.author%}
+            <a href="{% url 'ideas:edit' pk=idea.pk %}" class="icon-link ">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title
+                        xmlns="">
+                    edit</title>
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="1.5"
+                          d="M4 21h16M5.666 13.187A2.28 2.28 0 0 0 5 14.797V18h3.223c.604 0 1.183-.24 1.61-.668l9.5-9.505a2.28 2.28 0 0 0 0-3.22l-.938-.94a2.277 2.277 0 0 0-3.222.001z"/>
+                </svg>
+            </a>
+            {%endif%}
+            <h1 class="card-header-block__title"
+                title="{{idea.title}}">{{ idea.title }}</h1>
+        </div>
+        <div class="cluster">
+            <div class="status-badge status-{{ idea.status }}">{{ idea.get_status_display }}</div>
+        </div>
+    </header>
+
+    <!-- Асимметричная сетка: контент + сайдбар -->
+    <div class="asymmetric-grid">
+
+        <!-- Левая колонка: описание -->
+        <section class="stack">
+            <h3 class="grid-title">Описание</h3>
+            <div class="sidebar-panel markdown-editor__preview expandable-text">
+                <div class="text-block  " style="padding: 0; margin: 0; max-width: none;">
+                    {{ idea.description|markdown }}
+                </div>
+            </div>
+
+            <!-- Блог -->
+            <div class="">
+
+
+            </div>
+        </section>
+
+        <!-- Правая колонка -->
+        <aside class="stack">
+            <!-- Статистика -->
+            <div class="sidebar-panel">
+                <div class="grid-title">
+                    <h3 class="icon-link">Статистика</h3>
+                </div>
+                <ul class="">
+                    <li class="cluster">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 24 24"><title
+                                xmlns="">activity</title>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="1.5"
+                                  d="M21 12h-2.962c-.21 0-.316 0-.405.042a.5.5 0 0 0-.201.173c-.061.088-.092.205-.155.44l-1.817 6.846c-.233.875-.349 1.313-.524 1.426a.435.435 0 0 1-.485-.002c-.175-.115-.288-.554-.514-1.43l-3.873-14.99c-.227-.876-.34-1.315-.515-1.43a.435.435 0 0 0-.485-.002c-.175.113-.291.55-.524 1.426l-1.817 6.845c-.063.236-.094.353-.154.44a.5.5 0 0 1-.202.174C6.278 12 6.173 12 5.962 12H3"/>
+                        </svg>
+                        <div class="text-cluster">
+                            <p class="title">80</p>
+                            <p class="">Активность</p>
+                        </div>
+                    </li>
+                    <li class="cluster">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 24 24"><title
+                                xmlns="">up-line</title>
+                            <g fill="none" fill-rule="evenodd">
+                                <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+                                <path fill="currentColor"
+                                      d="M11.293 8.293a1 1 0 0 1 1.414 0l5.657 5.657a1 1 0 0 1-1.414 1.414L12 10.414l-4.95 4.95a1 1 0 0 1-1.414-1.414z"/>
+                            </g>
+                        </svg>
+                        <div class="text-cluster">
+                            <p class="title">1322</p>
+                            <p class="">Оценки</p>
+                        </div>
+                    </li>
+                    <li class="cluster">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 24 24"><title
+                                xmlns="">eye-solid</title>
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                               stroke-width="1.5">
+                                <path d="M3 13c3.6-8 14.4-8 18 0"/>
+                                <path fill="currentColor" d="M12 17a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/>
+                            </g>
+                        </svg>
+                        <div class="text-cluster">
+                            <p class="title">421</p>
+                            <p class="">Подписки</p>
+                        </div>
+                    </li>
+                    <li class="cluster">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 36 36"><title
+                                xmlns="">envelope-line</title>
+                            <path fill="currentColor"
+                                  d="M32 6H4a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2m-1.54 22H5.66l7-7.24l-1.44-1.39L4 26.84V9.52l12.43 12.37a2 2 0 0 0 2.82 0L32 9.21v17.5l-7.36-7.36l-1.41 1.41ZM5.31 8h25.07L17.84 20.47Z"
+                                  class="clr-i-outline clr-i-outline-path-1"/>
+                            <path fill="none" d="M0 0h36v36H0z"/>
+                        </svg>
+                        {% if idea.author == user %}
+                        <a class="icon-link" href="{% url 'ideas:responses:idea_responses' idea_id=idea.id %}">
+                            {% include 'partials/_response_link.html' with idea=idea %}
+                        </a>
+                        {% else %}
+                        <div class="">
+                            {% include 'partials/_response_link.html' with idea=idea %}
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <!-- Роли -->
+            <div class="sidebar-panel">
+                <div class="grid-title">
+                    <a href="{% url 'ideas:roles:role_list' idea_id=idea.pk %}">
+                        <h3 class="icon-link">Роли в проекте</h3>
+                    </a>
+                    {% if user == idea.author %}
+                    <a href="{% url 'ideas:roles:create_role' idea.pk %}" class="icon-link">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                             viewBox="0 0 24 24"><title
+                                xmlns="">round-plus</title>
+                            <path fill="currentColor"
+                                  d="M18 12.998h-5v5a1 1 0 0 1-2 0v-5H6a1 1 0 0 1 0-2h5v-5a1 1 0 0 1 2 0v5h5a1 1 0 0 1 0 2"/>
+                        </svg>
+                    </a>
+                    {%endif%}
+                </div>
+                {% if idea.roles.all %}
+                <div class="divided-list">
+                    {% for role in idea.roles.all %}
+                    {% if role.is_open %}
+                    <div class="divided-list-item">
+                        <a href="{%url 'ideas:roles:detail' role_id=role.pk%}">{{ role.title }}</a>
+                        <span class="user-meta">
+                    Свободно: {{ role.count_filled }} из {{ role.count_needed }}
+                  </span>
+                        {% if user == idea.author %}
+                        <a href="{% url 'ideas:roles:delete_role' role_id=role.pk %}"
+                           class="icon-link">
+                            Удалить роль
+                        </a>
+                        {%else%}
+                        <a href="{% url 'ideas:responses:create' role_id=role.pk%}" class="icon-link">Откликнуться</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="user-meta">Роли пока не добавлены</p>
+                {% endif %}
+            </div>
+
+            <!-- Автор -->
+            <div class="sidebar-panel">
+                <h3>Автор</h3>
+                <a class="icon-link" href="{% url 'users:profile' username=idea.author.username %}">
+                    <div class="user-profile">
+                        {% if idea.author.avatar %}
+                        <img src="{{ idea.author.avatar.url }}"
+                             alt="Аватар {{ idea.author.username }}"
+                             class="user-avatar-lg">
+                        {% else %}
+                        <div class="user-avatar user-avatar-char">
+                            {{ idea.author.username|first|upper }}
+                        </div>
+                        {% endif %}
+                        <div class="user-info">
+                            <span class="user-name">{{ idea.author.username }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

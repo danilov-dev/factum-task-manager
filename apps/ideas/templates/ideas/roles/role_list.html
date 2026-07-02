@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{%block title%} IDEAS {%endblock%}
+
+{% block content %}
+<div class="stack">
+
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumb">
+        <a href="{% url 'ideas:idea_list' %}"
+           title="Идеи">Идеи</a>
+        <a href="{% url 'ideas:detail' pk=idea_id %}"
+           title="{{ idea.title }}">{{ idea.title|truncatechars:25 }}   </a>
+        <span>Роли</span>
+    </nav>
+    <div class="title">
+        <h1>Roles</h1>
+    </div>
+    <div class="list stack-without-gap">
+        {% for role in roles %}
+        <div class="role-list-item">
+            <a href="{% url 'ideas:roles:detail' role_id=role.id %}">
+                <div class="cluster">
+                    <div class="stack-without-gap">
+                        <div class="title-box cluster">
+                            <h2 class="card-title icon-link">{{role.title}}</h2>
+                            <div class="status-indicator">
+                                <p class="subtitle">{{role.description}}</p>
+                            </div>
+                        </div>
+                        <div class="cluster">
+                            <p class="subtitle">created at {{role.created_at|date:"d.m.y"}}</p>
+                        </div>
+                        <div class="text-cluster tag-board">
+                            {%if role.necessary_skills.all%}
+
+                            {% for role_skill in role.necessary_skills.all %}
+                            <div class="skill-tag">
+                                <p class="subtitle">{{role_skill.skill.name}}</p>
+                            </div>
+                            {%endfor%}
+                            {%else%}
+                            <p class="subtitle">Навыки не указаны</p>
+                            {%endif%}
+                        </div>
+
+                    </div>
+                </div>
+                {% if user == role.author %}
+                <a href="{% url 'ideas:edit' pk=idea.pk %}" class="btn-link">edit</a>
+                {% endif %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

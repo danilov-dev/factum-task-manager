@@ -5,13 +5,14 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView
 
 from apps.ideas.forms import IdeaCreateForm
-from apps.ideas.models import Idea
-from apps.ideas.services import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
+from apps.ideas.models import Idea, IdeaResponse
+from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
+from apps.ideas.services.response import get_responses_for_idea
 
 
 class IdeasList(ListView):
     model = Idea
-    template_name = 'ideas/idea_list.html'
+    template_name = 'ideas/ideas/idea_list.html'
     context_object_name = 'ideas'
 
     def get_queryset(self):
@@ -20,7 +21,7 @@ class IdeasList(ListView):
 
 class IdeaDetail(DetailView):
     model = Idea
-    template_name = 'ideas/idea_detail.html'
+    template_name = 'ideas/ideas/idea_detail.html'
     context_object_name = 'idea'
 
     def get_object(self, queryset=None):
@@ -28,6 +29,18 @@ class IdeaDetail(DetailView):
         if idea_id is None:
             raise Http404("Идея не найдена")
         return get_idea_with_stats(idea_id=idea_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        idea = self.get_object()
+
+        context['all_responses'] = get_responses_for_idea(idea, idea.author, ['approved','rejected']).count()
+        if self.request.user.is_authenticated:
+            context['pend_responses'] = IdeaResponse.get_pending_response(
+                idea=idea
+            ).count()
+
+        return context
 
 
 @login_required
@@ -38,6 +51,7 @@ def create_new_idea(request):
             idea = create_idea(
                 author=request.user,
                 title=form.cleaned_data['title'],
+                about=form.cleaned_data['about'],
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
             )
@@ -45,7 +59,7 @@ def create_new_idea(request):
             return redirect('ideas:detail', pk=idea.pk)
     else:
         form = IdeaCreateForm()
-    return render(request, 'ideas/create.html', {'form': form})
+    return render(request, 'ideas/ideas/create.html', {'form': form})
 
 
 @login_required
@@ -61,6 +75,7 @@ def edit_idea(request, pk):
             update_idea(
                 idea_id=pk,
                 title=form.cleaned_data['title'],
+                about=form.cleaned_data['about'],
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
                 status=form.cleaned_data['status'],
@@ -75,4 +90,4 @@ def edit_idea(request, pk):
     else:
         form = IdeaCreateForm(instance=idea)
 
-    return render(request, 'ideas/edit.html', {'form': form, 'idea': idea})
+    return render(request, 'ideas/ideas/create.html', {'form': form, 'idea': idea})
