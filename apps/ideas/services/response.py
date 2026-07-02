@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 
 from apps.ideas.models import IdeaResponse
@@ -32,14 +33,25 @@ def create_response(*, user, role_id: int, message: str = ''):
     )
     return response
 
+def _filter_responses_by_status(responses: QuerySet, status:str):
+    """Фильтр queryset откликов по статусу"""
+    if isinstance(status, list):
+        responses = responses.filter(status__in=status)
+    elif status != 'all':
+        responses = responses.filter(status=status)
+    return responses
 
-def get_user_responses(user):
+def get_user_responses(user, status=None):
     """Получить все отклики пользователя"""
-    return IdeaResponse.objects.filter(user=user).select_related(
+    qs = IdeaResponse.objects.filter(user=user).select_related(
         'role',
         'role__idea',
         'role__idea__author'
-    ).order_by('-created_at')
+    )
+    if  status:
+        qs = _filter_responses_by_status(qs, status)
+
+    return qs.order_by('status', '-created_at')
 
 
 def get_responses_for_idea(idea, author, status=None):
@@ -49,22 +61,27 @@ def get_responses_for_idea(idea, author, status=None):
 
     qs = IdeaResponse.objects.filter(role__idea=idea).select_related('user', 'role')
 
-    # Если передан список статусов для включения
     if status:
-        if isinstance(status, list):
-            qs = qs.filter(status__in=status)
-        elif status != 'all':
-            qs = qs.filter(status=status)
+        qs = _filter_responses_by_status(qs, status)
 
     return qs.order_by('status', '-created_at')
 
 
-def get_responses_counts(idea, author):
+def get_idea_responses_counts(idea, author):
     """Получить количество откликов по каждому статусу"""
     if idea.author != author:
         raise ValidationError('Только автор идеи может просматривать отклики')
 
     responses = IdeaResponse.objects.filter(role__idea=idea)
+    return {
+        'all': responses.count(),
+        'pending': responses.filter(status=IdeaResponse.Status.PENDING).count(),
+        'approved': responses.filter(status=IdeaResponse.Status.APPROVED).count(),
+        'rejected': responses.filter(status=IdeaResponse.Status.REJECTED).count(),
+    }
+
+def get_user_responses_counts(user):
+    responses = IdeaResponse.objects.filter(user=user)
     return {
         'all': responses.count(),
         'pending': responses.filter(status=IdeaResponse.Status.PENDING).count(),

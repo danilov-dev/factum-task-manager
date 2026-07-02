@@ -11,7 +11,7 @@ from ..services.response import (
     get_user_responses,
     get_responses_for_idea,
     approve_response,
-    reject_response, get_responses_counts, cancel_response
+    reject_response, get_idea_responses_counts, cancel_response, get_user_responses_counts
 )
 
 
@@ -45,13 +45,27 @@ def create_response_view(request, role_id):
         'idea': role.idea
     })
 
+def _validate_status(status: str):
+    valid_statuses = ['all', 'pending', 'approved', 'rejected']
+    if status not in valid_statuses:
+        status = 'pending'
+    return status
+
 
 @login_required
 def my_responses(request):
     """Список моих откликов"""
-    responses = get_user_responses(request.user)
+    status_filter = request.GET.get('status', 'pending')
+
+    status_filter = _validate_status(status_filter)
+
+    counts = get_user_responses_counts(request.user)
+
+    responses = get_user_responses(request.user, status=status_filter)
     return render(request, 'ideas/responses/responses_list.html', {
-        'responses': responses
+        'responses': responses,
+        'counts': counts,
+        'current_status': status_filter,
     })
 
 
@@ -63,19 +77,13 @@ def idea_responses(request, idea_id):
     # Получаем статус из GET-параметров, по умолчанию 'pending'
     status_filter = request.GET.get('status', 'pending')
 
-    # Валидация статуса
-    valid_statuses = ['all', 'pending', 'approved', 'rejected']
-    if status_filter not in valid_statuses:
-        status_filter = 'pending'
+    status_filter = _validate_status(status_filter)
 
     # Получаем отфильтрованные отклики
     responses = get_responses_for_idea(idea, request.user, status=status_filter)
 
     # Получаем счетчики для табов
-    counts = get_responses_counts(idea, request.user)
-
-    for resp in responses:
-        print(resp.status)
+    counts = get_idea_responses_counts(idea, request.user)
 
     return render(request, 'ideas/responses/responses_list.html', {
         'idea': idea,

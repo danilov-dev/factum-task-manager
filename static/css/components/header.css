@@ -1,0 +1,26 @@
+.header {
+    background: var(--bg-secondary);
+    border: var(--border-thickness) solid var(--bg-tertiary);
+}
+
+.header h1 {
+    font-size: var(--fs-hero);
+    font-width: extra-condensed;
+}
+
+.header-block {
+    justify-content: space-between;
+    margin: var(--space-2xl);
+}
+
+.btn-link {
+    border: var(--border-thickness) solid var(--bg-tertiary);
+    border-radius: var(--border-radius-sm);
+    padding: var(--space-xs) var(--space-m);
+    transition: all 0.5s ease-out;
+    text-align: center;
+}
+
+.btn-link:hover {
+    border: var(--border-thickness) solid var(--link-hover);
+}

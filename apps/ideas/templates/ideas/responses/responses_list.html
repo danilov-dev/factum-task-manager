@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %} Отклики на идею {% endblock %}
+{% block title %} {% if idea %}Отклики на идею{% else %}Мои отклики{% endif %} {% endblock %}
 
 {% block content %}
 <div class="container" style="margin-top: 20px;">
@@ -17,18 +17,26 @@
 
     <!-- Вкладки (Табы) с фильтрацией -->
     <div class="tab-bar" style="margin-bottom: 20px;">
-        <a href="?status=pending" class="tab-item {% if current_status == 'pending' %}active{% endif %}">
-            Ожидают решения ({{ counts.pending }})
-        </a>
-        <a href="?status=approved" class="tab-item {% if current_status == 'approved' %}active{% endif %}">
-            Принятые ({{ counts.approved }})
-        </a>
-        <a href="?status=rejected" class="tab-item {% if current_status == 'rejected' %}active{% endif %}">
-            Отклоненные ({{ counts.rejected }})
-        </a>
-        <a href="?status=all" class="tab-item {% if current_status == 'all' %}active{% endif %}">
-            Все ({{ counts.all }})
-        </a>
+        <div class="tab-item-wrapper {% if current_status == 'pending' %}active{% endif %}">
+            <a href="?status=pending" class="tab-item ">
+                Ожидают решения ({{ counts.pending }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'approved' %}active{% endif %}">
+            <a href="?status=approved" class="tab-item ">
+                Принятые ({{ counts.approved }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'rejected' %}active{% endif %}">
+            <a href="?status=rejected" class="tab-item ">
+                Отклоненные ({{ counts.rejected }})
+            </a>
+        </div>
+        <div class="tab-item-wrapper {% if current_status == 'all' %}active{% endif %}">
+            <a href="?status=all" class="tab-item ">
+                Все ({{ counts.all }})
+            </a>
+        </div>
     </div>
 
     <!-- Таблица откликов -->
@@ -58,7 +66,12 @@
                 </td>
                 {% endif %}
 
-                <td>{{ response.role.title }}</td>
+                <td>
+                    <a href="{% url 'ideas:roles:detail' role_id=response.role.id %}" class="table-link">
+                        {{ response.role.title }}
+                    </a>
+
+                </td>
 
                 <td>
                     <a href="{% url 'users:profile' username=response.user.username %}" class="table-link">
