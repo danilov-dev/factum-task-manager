@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 
 from django.contrib import messages
@@ -13,6 +14,9 @@ from apps.ideas.forms import RoleCreateForm, RoleSkillFormSet
 from apps.ideas.models import Idea, IdeaRole
 from apps.ideas.services.role import get_role, get_all_roles, delete_role
 from apps.users.models import Skill
+
+logger = logging.getLogger(__name__)
+
 
 class RoleDetailView(DetailView):
     model = IdeaRole
@@ -34,7 +38,6 @@ def create_role(request, pk):
         messages.error(request, 'Вы не можете добавлять роли к этой инициативе')
         return redirect('ideas:detail', pk=idea.id)
 
-
     skills_by_category = defaultdict(list)
     for skill in Skill.objects.all().order_by('category', 'name'):
         skills_by_category[skill.category].append({
@@ -53,9 +56,9 @@ def create_role(request, pk):
             role = form.save()
             formset.instance = role
             formset.save()
-
+            logger.info("Создана роль '%s' для идеи '%s' (id=%d)", role.title, idea.title, idea.pk)
             messages.success(request, f'Роль "{role.title}" успешно создана!')
-            return redirect('ideas:detail', pk=idea.id)
+            return redirect('ideas:detail', pk=idea.pk)
     else:
         form = RoleCreateForm(idea=idea)
         formset = RoleSkillFormSet(instance=None)
@@ -96,6 +99,7 @@ def get_skills_by_category(request):
             'error': str(e),
         }, status=500)
 
+
 class RolesListView(ListView):
     model = IdeaRole
     template_name = 'ideas/roles/role_list.html'
@@ -126,7 +130,7 @@ class DeleteRoleView(LoginRequiredMixin, DeleteView):
         role_title = self.object.title
 
         deleted_responses = delete_role(self.object, self.request.user)
-
+        logger.info("Удалена роль '%s' (idea_id=%d) пользователем %s", role_title, idea_id, self.request.user)
         if deleted_responses:
             messages.warning(self.request, f"Удалено {deleted_responses} откликов.")
         else:
@@ -160,7 +164,7 @@ def edit_role(request, role_id):
         if form.is_valid() and formset.is_valid():
             role = form.save()
             formset.save()
-
+            logger.info("Обновлена роль '%s' (id=%d)", role.title, role.pk)
             messages.success(request, f'Роль "{role.title}" успешно обновлена!')
             return redirect('ideas:detail', pk=idea.id)
     else:
