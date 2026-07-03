@@ -86,7 +86,7 @@ def edit_idea(request, pk):
                 category=form.cleaned_data['category'],
                 status=form.cleaned_data['status'],
             )
-
+            logger.info("Обновлена идея '%s' (id=%d) пользователем %s", idea.title, idea.pk, request.user)
             messages.success(request, f'Идея: {idea.title} успешно обновлена')
             return redirect('ideas:detail', pk=idea.pk)
     else:
