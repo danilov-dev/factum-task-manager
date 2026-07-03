@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -10,6 +12,7 @@ from apps.ideas.models import Idea, IdeaResponse
 from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
 from apps.ideas.services.response import get_responses_for_idea
 
+logger = logging.getLogger(__name__)
 
 class IdeasList(ListView):
     model = Idea
@@ -56,6 +59,10 @@ def create_new_idea(request):
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
             )
+            logger.info(
+                'Создана идея "%s" (id=%d) пользователем %s',
+                idea.title, idea.pk, request.user,
+            )
             messages.success(request, f'Идея: {idea.title} успешно создана')
             return redirect('ideas:detail', pk=idea.pk)
     else:
@@ -67,24 +74,21 @@ def create_new_idea(request):
 @user_is_author_of_idea
 def edit_idea(request, pk):
     idea = get_object_or_404(Idea, pk=pk)
+
     if request.method == 'POST':
-        form = IdeaCreateForm(request.POST, instance=idea)
+        form = IdeaCreateForm(request.POST)
         if form.is_valid():
-            update_idea(
-                idea_id=pk,
+            idea = update_idea(
+                idea=idea,
                 title=form.cleaned_data['title'],
                 about=form.cleaned_data['about'],
                 description=form.cleaned_data['description'],
                 category=form.cleaned_data['category'],
                 status=form.cleaned_data['status'],
             )
+
             messages.success(request, f'Идея: {idea.title} успешно обновлена')
             return redirect('ideas:detail', pk=idea.pk)
-        else:
-            messages.warning(
-                request,
-                f'Есть еще {idea.unfilled_roles_count} незаполненных ролей',
-            )
     else:
         form = IdeaCreateForm(instance=idea)
 

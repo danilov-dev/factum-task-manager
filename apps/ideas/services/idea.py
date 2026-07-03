@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from apps.ideas.models import Idea
 
 
-def create_idea(*, author, title,about, description, category):
+def create_idea(*, author, title, about, description, category):
     """Создать черновик идеи."""
     idea = Idea.objects.create(
         author=author,
@@ -17,15 +17,33 @@ def create_idea(*, author, title,about, description, category):
     return idea
 
 
-def update_idea(*, idea_id, title, about, description, category, status):
+def update_idea(*, idea, title, about, description, category, status):
     """Обновить существующую идею."""
-    idea = get_object_or_404(Idea, pk=idea_id)
-    idea.title = title
-    idea.about = about
-    idea.description = description
-    idea.category = category
-    idea.status = status
-    idea.save()
+    fields_to_update = []
+
+    if idea.title != title:
+        idea.title = title
+        fields_to_update.append('title')
+
+    if idea.about != about:
+        idea.about = about
+        fields_to_update.append('about')
+
+    if idea.description != description:
+        idea.description = description
+        fields_to_update.append('description')
+
+    if idea.category != category:
+        idea.category = category
+        fields_to_update.append('category')
+
+    if idea.status != status:
+        idea.status = status
+        fields_to_update.append('status')
+
+    if fields_to_update:
+        idea.save(update_fields=fields_to_update)
+
     return idea
 
 
