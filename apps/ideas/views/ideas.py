@@ -4,6 +4,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView
 
+from apps.ideas.decorators import user_is_author_of_idea
 from apps.ideas.forms import IdeaCreateForm
 from apps.ideas.models import Idea, IdeaResponse
 from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
@@ -63,12 +64,9 @@ def create_new_idea(request):
 
 
 @login_required
+@user_is_author_of_idea
 def edit_idea(request, pk):
     idea = get_object_or_404(Idea, pk=pk)
-    if request.user != idea.author:
-        messages.error(request, 'Вы не можете редактировать чужую идею')
-        return redirect('ideas:detail', pk=idea.pk)
-
     if request.method == 'POST':
         form = IdeaCreateForm(request.POST, instance=idea)
         if form.is_valid():
