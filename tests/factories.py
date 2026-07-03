@@ -25,8 +25,8 @@ class IdeaFactory(factory.django.DjangoModelFactory):
     about = factory.Faker('text', max_nb_chars=200)
     description = factory.Faker('text')
     category = Idea.Category.IT
-    status = Idea.Status.DRAFT
-    is_published = False
+    status = Idea.Status.OPEN
+    is_published = True
 
 
 class IdeaRoleFactory(factory.django.DjangoModelFactory):

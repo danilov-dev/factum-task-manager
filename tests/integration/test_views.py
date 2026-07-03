@@ -9,7 +9,7 @@ from tests.factories import IdeaFactory, IdeaRoleFactory, IdeaResponseFactory, U
 class TestIdeaViews:
     def test_idea_list_view(self, client):
         """Тест списка идей"""
-        IdeaFactory.create_batch(5, status='published')
+        IdeaFactory.create_batch(5, status='open')
 
         response = client.get(reverse('ideas:idea_list'))
 
@@ -32,7 +32,7 @@ class TestIdeaViews:
             'about': 'About',
             'description': 'Description',
             'category': 1,
-            'status': 'draft'
+            'status': 'open'
         }
 
         response = authenticated_client.post(reverse('ideas:create'), data)
