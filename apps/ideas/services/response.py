@@ -89,6 +89,9 @@ def get_user_responses_counts(user):
         'rejected': responses.filter(status=IdeaResponse.Status.REJECTED).count(),
     }
 
+def get_pending_responses_count(idea):
+    return IdeaResponse.get_pending_response(idea=idea).count()
+
 
 @transaction.atomic
 def approve_response(response_id: int, author):

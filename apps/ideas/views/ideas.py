@@ -10,7 +10,7 @@ from apps.ideas.decorators import user_is_author_of_idea
 from apps.ideas.forms import IdeaCreateForm
 from apps.ideas.models import Idea, IdeaResponse
 from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
-from apps.ideas.services.response import get_responses_for_idea
+from apps.ideas.services.response import get_responses_for_idea, get_pending_responses_count
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +40,7 @@ class IdeaDetail(DetailView):
 
         context['all_responses'] = get_responses_for_idea(idea, idea.author, ['approved','rejected']).count()
         if self.request.user.is_authenticated:
-            context['pend_responses'] = IdeaResponse.get_pending_response(
-                idea=idea
-            ).count()
+            context['pend_responses'] = get_pending_responses_count(idea)
 
         return context
 
