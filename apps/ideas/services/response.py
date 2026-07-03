@@ -56,7 +56,7 @@ def get_user_responses(user, status=None):
 
 def get_responses_for_idea(idea, author, status=None):
     """Получить отклики на идею с опциональной фильтрацией по статусу"""
-    if idea.author != author:
+    if idea.author_id != author.id:
         raise ValidationError('Только автор идеи может просматривать отклики')
 
     qs = IdeaResponse.objects.filter(role__idea=idea).select_related('user', 'role')
@@ -69,7 +69,7 @@ def get_responses_for_idea(idea, author, status=None):
 
 def get_idea_responses_counts(idea, author):
     """Получить количество откликов по каждому статусу"""
-    if idea.author != author:
+    if idea.author_id != author.id:
         raise ValidationError('Только автор идеи может просматривать отклики')
 
     responses = IdeaResponse.objects.filter(role__idea=idea)

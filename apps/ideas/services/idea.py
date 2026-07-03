@@ -58,14 +58,17 @@ def get_idea(*, idea_id: int):
 def get_idea_with_stats(*, idea_id: int):
     """Получить идею со статистикой по ролям."""
     idea = get_object_or_404(
-        Idea.objects.select_related('author').prefetch_related('roles'),
+        Idea.objects
+        .select_related('author')
+        .prefetch_related(
+            'roles',
+            'roles__responses',
+        ),
         pk=idea_id,
     )
-    idea.open_roles_count = idea.roles.filter(is_open=True).count()
-    idea.has_team = any(
-        role.count_filled > 0
-        for role in idea.roles.all()
-    )
+
+    idea.open_roles_count = sum(1 for role in idea.roles.all() if role.is_open)
+    idea.has_team = any(role.count_filled > 0 for role in idea.roles.all())
     idea.search_pronoun = 'Мы ищем' if idea.has_team else 'Я ищу'
 
     return idea

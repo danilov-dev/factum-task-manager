@@ -36,7 +36,7 @@ class IdeaDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        idea = self.get_object()
+        idea = self.object
 
         context['all_responses'] = get_responses_for_idea(idea, idea.author, ['approved','rejected']).count()
         if self.request.user.is_authenticated:

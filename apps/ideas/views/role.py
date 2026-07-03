@@ -152,7 +152,7 @@ def edit_role(request, role_id):
     skills_by_category = defaultdict(list)
     for skill in Skill.objects.all().order_by('category', 'name'):
         skills_by_category[skill.category].append({
-            'id': skill.id,
+            'id': skill.pk,
             'name': skill.name,
             'category': skill.category,
         })
