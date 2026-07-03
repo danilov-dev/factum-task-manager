@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -13,6 +15,8 @@ from ..services.response import (
     approve_response,
     reject_response, get_idea_responses_counts, cancel_response, get_user_responses_counts
 )
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -32,6 +36,10 @@ def create_response_view(request, role_id):
                     role_id=role_id,
                     message=form.cleaned_data['message']
                 )
+
+                logger.info("Пользователь %s оставил отклик на роль '%s' (идея: %s)",
+                            request.user, role.title, role.idea.title)
+
                 messages.success(request, 'Ваш отклик успешно отправлен!')
                 return redirect('ideas:detail', pk=role.idea.pk)
             except ValidationError as e:
@@ -44,6 +52,7 @@ def create_response_view(request, role_id):
         'role': role,
         'idea': role.idea
     })
+
 
 def _validate_status(status: str):
     valid_statuses = ['all', 'pending', 'approved', 'rejected']
@@ -73,16 +82,12 @@ def my_responses(request):
 def idea_responses(request, idea_id):
     """Список откликов на идею (для автора) с фильтрацией по статусу"""
     idea = get_object_or_404(Idea, pk=idea_id, author=request.user)
-
-    # Получаем статус из GET-параметров, по умолчанию 'pending'
     status_filter = request.GET.get('status', 'pending')
 
     status_filter = _validate_status(status_filter)
 
-    # Получаем отфильтрованные отклики
     responses = get_responses_for_idea(idea, request.user, status=status_filter)
 
-    # Получаем счетчики для табов
     counts = get_idea_responses_counts(idea, request.user)
 
     return render(request, 'ideas/responses/responses_list.html', {
@@ -101,7 +106,11 @@ def approve_response_view(request, response_id):
 
     try:
         response = approve_response(response_id, request.user)
+
+        logger.info("Автор %s одобрил отклик пользователя %s", request.user, response.user)
+
         messages.success(request, f'Отклик от {response.user.username} одобрен!')
+
         return redirect('ideas:responses:idea_responses', idea_id=response.role.idea.pk)
     except (IdeaResponse.DoesNotExist, ValidationError) as e:
         messages.error(request, str(e))
@@ -116,7 +125,11 @@ def reject_response_view(request, response_id):
 
     try:
         response = reject_response(response_id, request.user)
+
+        logger.info("Автор %s отклонил отклик пользователя %s", request.user, response.user)
+
         messages.success(request, f'Отклик от {response.user.username} отклонён')
+
         return redirect('ideas:responses:idea_responses', idea_id=response.role.idea.pk)
     except (IdeaResponse.DoesNotExist, ValidationError) as e:
         messages.error(request, str(e))
@@ -131,6 +144,9 @@ def cancel_response_view(request, response_id):
 
     try:
         cancel_response(response_id, request.user)
+
+        logger.info("Пользователь %s отменил свой отклик (id=%d)", request.user, response_id)
+
         messages.success(request, 'Ваш отклик успешно отменен.')
     except (IdeaResponse.DoesNotExist, ValidationError) as e:
         messages.error(request, str(e))
