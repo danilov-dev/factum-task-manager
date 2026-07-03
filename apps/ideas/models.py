@@ -1,9 +1,11 @@
+import logging
 from django.core.exceptions import ValidationError
 from django.db import models
 from markdownx.models import MarkdownxField
 
 from config import settings
 
+logger = logging.getLogger(__name__)
 
 class Idea(models.Model):
     """
@@ -274,8 +276,20 @@ class IdeaResponse(models.Model):
     def clean(self):
         super().clean()
         if not self.role.is_open:
+            logger.warning('Попытка отклика на закрытую роль %s (id=%d) '
+                'пользователем %s',
+                self.role.title, self.role.pk, self.user,)
+
             raise ValidationError('Эта роль больше не активна')
         if self.role.spots_left <= 0:
+            logger.warning(
+                'Попытка отклика на заполненную роль %s (id=%d)',
+                self.role.title, self.role.pk,
+            )
             raise ValidationError('Все места на эту роль уже заняты')
         if self.user == self.idea.author:
+            logger.warning(
+                'Автор %s попытался откликнуться на свою инициативу %s',
+                self.user, self.idea,
+            )
             raise ValidationError('Автор идеи не может откликнуться на свою инициативу')
