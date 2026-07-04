@@ -75,9 +75,25 @@
     justify-items: center;
 }
 
-.icon-link:hover { color: var(--link-color); }
-.icon-link:hover.positive { color: var(--btn-primary-hover); }
-.icon-link:hover.negative { color: var(--inactive); }
+.icon-link:hover {
+    color: var(--link-color);
+}
+
+.icon-link:hover.positive {
+    color: var(--btn-primary-hover);
+}
+
+.icon-link:hover.negative {
+    color: var(--inactive);
+}
+
+/*.icon-link.positive {*/
+/*    color: var(--btn-primary-hover);*/
+/*}*/
+
+/*.icon-link.negative {*/
+/*    color: var(--inactive);*/
+/*}*/
 
 .icon {
     width: 20px;
@@ -193,15 +209,59 @@
     border: var(--border-thickness) solid transparent;
 }
 
-.status-draft           { background: var(--bg-tertiary); color: var(--text-secondary); border-color: var(--border-color); }
-.status-open            { background: #1a3a2a; color: #58d68d; border-color: #2d6a4f; }
-.status-team_assembled  { background: #1a2a4a; color: #6da5ff; border-color: #2d4a7a; }
-.status-in_progress     { background: #3a2a1a; color: #f5b342; border-color: #7a5a2d; }
-.status-completed       { background: #1a3a3a; color: #48c9b0; border-color: #2d6a6a; }
-.status-archived        { background: #2a1a1a; color: #e74c3c; border-color: #5a2d2d; }
-.status-pending         { background: #3a2a1a; color: #f5b342; border-color: #7a5a2d; }
-.status-approved        { background: #1a3a2a; color: #58d68d; border-color: #2d6a4f; }
-.status-rejected        { background: #2a1a1a; color: #e74c3c; border-color: #5a2d2d; }
+.status-draft {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+.status-open {
+    background: #1a3a2a;
+    color: #58d68d;
+    border-color: #2d6a4f;
+}
+
+.status-team_assembled {
+    background: #1a2a4a;
+    color: #6da5ff;
+    border-color: #2d4a7a;
+}
+
+.status-in_progress {
+    background: #3a2a1a;
+    color: #f5b342;
+    border-color: #7a5a2d;
+}
+
+.status-completed {
+    background: #1a3a3a;
+    color: #48c9b0;
+    border-color: #2d6a6a;
+}
+
+.status-archived {
+    background: #2a1a1a;
+    color: #e74c3c;
+    border-color: #5a2d2d;
+}
+
+.status-pending {
+    background: #3a2a1a;
+    color: #f5b342;
+    border-color: #7a5a2d;
+}
+
+.status-approved {
+    background: #1a3a2a;
+    color: #58d68d;
+    border-color: #2d6a4f;
+}
+
+.status-rejected {
+    background: #2a1a1a;
+    color: #e74c3c;
+    border-color: #5a2d2d;
+}
 
 /* ===== КНОПКИ ===== */
 .btn {

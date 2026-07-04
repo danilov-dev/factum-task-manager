@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Base{% endblock %}</title>
+    {# HTMX — ОБЯЗАТЕЛЬНО! #}
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    {# CSRF для HTMX-запросов #}
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                || '{{ csrf_token }}';
+            event.detail.headers['X-CSRFToken'] = csrfToken;
+        });
+    </script>
     {% load static %}
     {% block extra_head %}{% endblock %}
+
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body class="">

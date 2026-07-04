@@ -2,6 +2,7 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, OuterRef, Exists, Value, BooleanField
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView
@@ -9,8 +10,10 @@ from django.views.generic import ListView, DetailView
 from apps.ideas.decorators import user_is_author_of_idea
 from apps.ideas.forms import IdeaCreateForm
 from apps.ideas.models import Idea, IdeaResponse
-from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea
+from apps.ideas.services.idea import get_visible_ideas, get_idea_with_stats, create_idea, update_idea, get_idea
 from apps.ideas.services.response import get_responses_for_idea, get_pending_responses_count
+from apps.likes.models import Like
+from apps.likes.services import is_liked, switch
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,18 @@ class IdeasList(ListView):
     context_object_name = 'ideas'
 
     def get_queryset(self):
-        return get_visible_ideas()
+        qs = get_visible_ideas()
+        qs = qs.annotate(likes_count=Count('likes'))
+
+        if self.request.user.is_authenticated:
+            user_likes = Like.objects.filter(
+                user=self.request.user,
+                idea=OuterRef('pk'),
+            )
+            qs = qs.annotate(is_liked=Exists(user_likes))
+        else:
+            qs = qs.annotate(is_liked=Value(False, output_field=BooleanField()))
+        return qs
 
 
 class IdeaDetail(DetailView):
@@ -41,6 +55,11 @@ class IdeaDetail(DetailView):
         context['all_responses'] = get_responses_for_idea(idea, idea.author, ['approved','rejected']).count()
         if self.request.user.is_authenticated:
             context['pend_responses'] = get_pending_responses_count(idea)
+            context['is_liked'] = is_liked(self.request.user, idea)
+        else:
+            context['is_liked'] = False
+
+        context['likes_count'] = idea.likes.count()
 
         return context
 
@@ -91,3 +110,21 @@ def edit_idea(request, pk):
         form = IdeaCreateForm(instance=idea)
 
     return render(request, 'ideas/ideas/create.html', {'form': form, 'idea': idea})
+
+@login_required
+def switch_idea_like(request, idea_id):
+    idea = get_idea(idea_id=idea_id)
+    if request.method == 'POST':
+        is_liked, likes_count = switch(request.user, idea)
+
+        return render(request, 'partials/like_button.html',{
+            'idea': idea,
+            'likes_count': likes_count,
+            'is_liked': is_liked,
+        })
+
+    return render(request, 'partials/like_button.html', {
+        'idea': idea,
+        'is_liked': False,
+        'likes_count': idea.likes.count()
+    })
