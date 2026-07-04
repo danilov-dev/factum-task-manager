@@ -48,3 +48,14 @@ class IdeaCreateForm(forms.ModelForm):
                 raise ValidationError('Нельзя собрать команду: не все роли заполнены')
 
         return status
+
+class IdeaSearchForm(forms.Form):
+    q = forms.CharField(
+        required=False,
+        label='',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Поиск...',
+            'autocomplete': 'off',
+        })
+    )

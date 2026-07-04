@@ -26,32 +26,51 @@
         <a href="{% url 'home' %}">
             <h1>Factum</h1>
         </a>
-        <div class="cluster">
-            {% if user.is_authenticated %}
-            <div class="text-cluster">
-                {# Аватар #}
-                {% if user.avatar %}
-                <img src="{{ user.avatar.url }}"
-                     alt="Аватар {{ user.username }}"
-                     class="user-avatar-lg">
-                {% else %}
-                <div class="user-avatar user-avatar-char">
-                    {{ user.username|first|upper }}
-                </div>
-                {% endif %}
-                <a class="icon-link" href="{% url 'users:profile' username=user.username %}">{{ user.username }}</a>
+
+
+
+    <div class="cluster">
+        <!-- Форма поиска с HTMX -->
+        <form method="get" action="{% url 'ideas:idea_list' %}" class="mb-4">
+            <div class="input-group">
+                <input
+                        type="text"
+                        name="q"
+                        value="{{ search_query }}"
+                        placeholder=""
+                        class="input-with-icon"
+                        hx-get="{% url 'ideas:idea_list' %}"
+                        hx-trigger="input changed delay:300ms"
+                        hx-target="#ideas-container"
+                        hx-push-url="true"
+                        hx-include="this">
             </div>
-            <form method="post" action="{% url 'accounts:logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn btn-link">
-                    <span>Выйти</span>
-                </button>
-            </form>
+        </form>
+        {% if user.is_authenticated %}
+        <div class="text-cluster">
+            {# Аватар #}
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}"
+                 alt="Аватар {{ user.username }}"
+                 class="user-avatar-lg">
             {% else %}
-            <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
-            <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
+            <div class="user-avatar user-avatar-char">
+                {{ user.username|first|upper }}
+            </div>
             {% endif %}
+            <a class="icon-link" href="{% url 'users:profile' username=user.username %}">{{ user.username }}</a>
         </div>
+        <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn btn-link">
+                <span>Выйти</span>
+            </button>
+        </form>
+        {% else %}
+        <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
+        <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
+        {% endif %}
+    </div>
     </div>
 </header>
 

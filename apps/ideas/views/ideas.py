@@ -23,7 +23,8 @@ class IdeasList(ListView):
     context_object_name = 'ideas'
 
     def get_queryset(self):
-        qs = get_visible_ideas()
+        search_query = self.request.GET.get('q', '').strip()
+        qs = get_visible_ideas(search_query=search_query)
         qs = qs.annotate(likes_count=Count('likes'))
 
         if self.request.user.is_authenticated:
@@ -35,6 +36,23 @@ class IdeasList(ListView):
         else:
             qs = qs.annotate(is_liked=Value(False, output_field=BooleanField()))
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        # Если это HTMX-запрос, возвращаем только partial
+        if self.request.headers.get('HX-Request'):
+            return self.response_class(
+                request=self.request,
+                template='/partials/_idea_list.html',
+                context=context,
+                using=self.template_engine,
+                **response_kwargs
+            )
+        return super().render_to_response(context, **response_kwargs)
 
 
 class IdeaDetail(DetailView):

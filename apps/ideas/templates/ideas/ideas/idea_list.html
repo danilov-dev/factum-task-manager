@@ -6,12 +6,17 @@
     <div class="title">
         <h1>IDEAS</h1>
     </div>
+
     <div class="divided-list idea-list-board">
+        {%if ideas%}
         {% for idea in ideas %}
 
-            {% include 'partials/_idea_list_item.html' with idea=idea%}
+        {% include 'partials/_idea_list_item.html' with idea=idea%}
 
         {% endfor %}
+        {%else%}
+        <p>Нет идей</p>
+        {%endif%}
     </div>
 </div>
 

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from apps.ideas.models import Idea
@@ -74,9 +75,9 @@ def get_idea_with_stats(*, idea_id: int):
     return idea
 
 
-def get_visible_ideas():
+def get_visible_ideas(search_query: str = None):
     """Возвращает идеи, видимые в публичной ленте."""
-    return Idea.objects.filter(
+    qs = Idea.objects.filter(
         is_published=True,
         status__in=(
             Idea.Status.OPEN,
@@ -84,6 +85,12 @@ def get_visible_ideas():
             Idea.Status.IN_PROGRESS,
         ),
     ).select_related('author').prefetch_related('roles')
+
+    if search_query:
+        qs = qs.filter(
+            Q(title__icontains=search_query) | Q(about__icontains=search_query)
+        )
+    return qs
 
 
 def get_ideas_by_category(category: str):
