@@ -4,7 +4,7 @@
 {% load markdown_tags %}
 
 {% block content %}
-<div class="container">
+<div class="stack">
 
     <!-- Хлебные крошки -->
     <nav class="breadcrumb" aria-label="breadcrumb">
@@ -13,33 +13,49 @@
     </nav>
 
     <!-- HEADER BLOCK -->
-    <header class="card-header-block grid-title">
-        <div class="cluster">
-            {%if user == idea.author%}
-            <a href="{% url 'ideas:edit' pk=idea.pk %}" class="icon-link ">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title
-                        xmlns="">
-                    edit</title>
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="1.5"
-                          d="M4 21h16M5.666 13.187A2.28 2.28 0 0 0 5 14.797V18h3.223c.604 0 1.183-.24 1.61-.668l9.5-9.505a2.28 2.28 0 0 0 0-3.22l-.938-.94a2.277 2.277 0 0 0-3.222.001z"/>
-                </svg>
-            </a>
-            {%endif%}
-            <h1 class="card-header-block__title"
-                title="{{idea.title}}">{{ idea.title }}</h1>
+    <div class="card-header-block grid-title">
+        <div class="stack">
+            <div class="cluster">
+                {%if user == idea.author%}
+                <a href="{% url 'ideas:edit' pk=idea.pk %}" class="icon-link ">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <title
+                                xmlns="">
+                            edit</title>
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="1.5"
+                              d="M4 21h16M5.666 13.187A2.28 2.28 0 0 0 5 14.797V18h3.223c.604 0 1.183-.24 1.61-.668l9.5-9.505a2.28 2.28 0 0 0 0-3.22l-.938-.94a2.277 2.277 0 0 0-3.222.001z"/>
+                    </svg>
+                </a>
+                {%endif%}
+                <h1 class="card-header-block__title"
+                    title="{{idea.title}}">{{ idea.title }}</h1>
+                <div class="cluster">
+                    <div class="status-badge status-{{ idea.status }}">{{ idea.get_status_display }}</div>
+                </div>
+            </div>
+
+            <!--Ссылки на дополнительные страницы-->
+            <div class="tab-bar" style="margin-bottom: 20px;">
+                <div class="tab-item-wrapper {% if idea %} active {% endif %} ">
+                    <a href="#" class="tab-item ">Идея</a>
+                </div>
+                <div class="tab-item-wrapper">
+                    <p class="tab-item ">Посты</p>
+                </div>
+                <div class="tab-item-wrapper">
+                    <p class="tab-item ">Проект</p>
+                </div>
+            </div>
+
         </div>
-        <div class="cluster">
-            <div class="status-badge status-{{ idea.status }}">{{ idea.get_status_display }}</div>
-        </div>
-    </header>
+    </div>
 
     <!-- Асимметричная сетка: контент + сайдбар -->
     <div class="asymmetric-grid">
 
         <!-- Левая колонка: описание -->
         <section class="stack">
-            <h3 class="grid-title">Описание</h3>
             <div class="sidebar-panel markdown-editor__preview expandable-text">
                 <div class="text-block  " style="padding: 0; margin: 0; max-width: none;">
                     {{ idea.description|markdown }}

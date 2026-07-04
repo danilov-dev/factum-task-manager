@@ -451,7 +451,6 @@
     flex-wrap: wrap;
     gap: var(--space-xs);
     border-bottom: var(--border-thickness) solid var(--border-color);
-    padding-bottom: var(--space-xs);
 }
 
 .tab-item {
@@ -476,13 +475,14 @@
 
 .tab-item-wrapper{
     padding: var(--space-xs) 0;
-
+    align-content: center;
 }
 
 .tab-item-wrapper.active {
     color: var(--text-primary);
     border-bottom: 2px solid var(--link-color);
     transition: all 0.2s;
+
 }
 
 /* 19. Шапка сайта */
