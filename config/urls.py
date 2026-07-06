@@ -8,6 +8,7 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('users/', include('apps.users.urls', namespace='users')),
     path('ideas/', include('apps.ideas.urls', namespace='ideas')),
+    path('subscriptions/', include('apps.subscriptions.urls'), name='subscriptions'),
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
     path('__debug__/', include('debug_toolbar.urls')),
 ]

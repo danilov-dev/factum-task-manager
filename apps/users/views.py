@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
 
-from apps.ideas.services.idea import get_user_ideas
+from apps.ideas.models import Idea
 from apps.users.models import User
 
 
@@ -25,7 +25,7 @@ class ProfileView(DetailView):
         user = self.object
         is_own = user == self.request.user
         context['is_own_profile'] = is_own
-        context['ideas'] = get_user_ideas(user, viewer=self.request.user)
+        context['ideas'] = Idea.objects.for_user(self.request.user, viewer=self.request.user)
         return context
 
 class UsersListView(ListView):

@@ -1,11 +1,45 @@
 import logging
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Exists
 from markdownx.models import MarkdownxField
-
 from config import settings
 
 logger = logging.getLogger(__name__)
+
+
+class IdeaQuerySet(models.QuerySet):
+    """Кастомный QuerySet для работы с идеями."""
+
+    def visible(self):
+        """Идеи, видимые в публичной ленте."""
+        return self.filter(
+            is_published=True,
+            status__in=[
+                Idea.Status.OPEN,
+                Idea.Status.TEAM_ASSEMBLED,
+                Idea.Status.IN_PROGRESS,
+            ]
+        ).select_related('author').prefetch_related('roles')
+
+    def by_category(self, category: str):
+        """Идеи по категории."""
+        return self.visible().filter(category=category)
+
+    def for_user(self, user, viewer=None):
+        """Идеи пользователя с учётом прав просмотра."""
+        qs = self.filter(author=user)
+        if viewer != user:
+            qs = qs.visible()
+        return qs.order_by('-created_at')
+
+    def with_stats(self):
+        """Идеи с оптимизированными связями для детального просмотра."""
+        return self.select_related('author').prefetch_related(
+            'roles',
+            'roles__responses',
+        )
+
 
 class Idea(models.Model):
     """
@@ -63,6 +97,8 @@ class Idea(models.Model):
         verbose_name='Обновлена',
     )
 
+    objects = IdeaQuerySet.as_manager()
+
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Инициатива'
@@ -96,6 +132,23 @@ class Idea(models.Model):
         return self.roles.filter(
             count_filled__lt=models.F('count_needed')
         ).count()
+
+
+class IdeaRoleQuerySet(models.QuerySet):
+    """Кастомный QuerySet для ролей."""
+
+    def for_idea(self, idea_id: int):
+        """Роли для конкретной идеи с оптимизацией."""
+        return self.filter(idea_id=idea_id).select_related('idea').prefetch_related(
+            'necessary_skills__skill',
+        )
+
+    def with_details(self):
+        """Роли с детальной информацией о навыках."""
+        return self.prefetch_related(
+            'necessary_skills',
+            'necessary_skills__skill',
+        )
 
 
 class IdeaRole(models.Model):
@@ -138,6 +191,8 @@ class IdeaRole(models.Model):
         verbose_name='Создана',
     )
 
+    objects = IdeaRoleQuerySet.as_manager()
+
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Роль в инициативе'
@@ -154,8 +209,6 @@ class IdeaRole(models.Model):
     @property
     def required_skills(self):
         return self.skills.filter(necessary_in_roles__is_required=True)
-
-
 
     def close_if_full(self):
         """Закрыть набор, если все места заняты."""
@@ -198,6 +251,34 @@ class IdeaRoleSkill(models.Model):
     def __str__(self):
         required_text = 'Обязательно' if self.is_required else 'Желательно'
         return f'{self.role.title} -> {self.skill.name} ({required_text})'
+
+
+class IdeaResponseQuerySet(models.QuerySet):
+    """Кастомный QuerySet для откликов."""
+
+    def pending(self):
+        """Отклики на рассмотрении."""
+        return self.filter(status=IdeaResponse.Status.PENDING)
+
+    def by_status(self, status):
+        """Фильтр по статусу."""
+        if isinstance(status, list):
+            return self.filter(status__in=status)
+        elif status != 'all':
+            return self.filter(status=status)
+        return self
+
+    def for_user(self, user):
+        """Отклики пользователя с оптимизацией."""
+        return self.filter(user=user).select_related(
+            'role',
+            'role__idea',
+            'role__idea__author'
+        )
+
+    def for_idea(self, idea):
+        """Отклики на идею с оптимизацией."""
+        return self.filter(role__idea=idea).select_related('user', 'role')
 
 
 class IdeaResponse(models.Model):
@@ -245,19 +326,7 @@ class IdeaResponse(models.Model):
         verbose_name='Обновлен',
     )
 
-    @classmethod
-    def get_pending_response(cls, user=None, role=None, idea=None):
-        """Получить отклики на рассмотрении с фильтрацией"""
-        queryset = cls.objects.filter(status=cls.Status.PENDING)
-
-        if user:
-            queryset = queryset.filter(user=user)
-        if role:
-            queryset = queryset.filter(role=role)
-        if idea:
-            queryset = queryset.filter(idea=idea)
-
-        return queryset
+    objects = IdeaResponseQuerySet.as_manager()
 
     class Meta:
         ordering = ['-created_at']
@@ -277,9 +346,8 @@ class IdeaResponse(models.Model):
         super().clean()
         if not self.role.is_open:
             logger.warning('Попытка отклика на закрытую роль %s (id=%d) '
-                'пользователем %s',
-                self.role.title, self.role.pk, self.user,)
-
+                           'пользователем %s',
+                           self.role.title, self.role.pk, self.user, )
             raise ValidationError('Эта роль больше не активна')
         if self.role.spots_left <= 0:
             logger.warning(

@@ -1,11 +1,16 @@
-from django.urls import path, include
+from django.urls import path
 
-from apps.ideas.views.ideas import IdeasList, create_new_idea, IdeaDetail, edit_idea, switch_idea_like
+from apps.ideas.views.ideas import (
+    IdeasList,
+    IdeaDetail,
+    IdeaCreateView,
+    IdeaUpdateView, switch_idea_like
+)
 
 urlpatterns = [
     path('', IdeasList.as_view(), name='idea_list'),
-    path('create/', create_new_idea, name='create'),
+    path('create/', IdeaCreateView.as_view(), name='create'),
     path('<int:pk>/', IdeaDetail.as_view(), name='detail'),
-    path('<int:pk>/edit/', edit_idea, name='edit'),
+    path('<int:pk>/edit/', IdeaUpdateView.as_view(), name='edit'),
     path('<int:idea_id>/like/', switch_idea_like, name='switch_like'),
 ]

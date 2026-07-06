@@ -3,6 +3,7 @@ from django.db import models
 
 
 class Like(models.Model):
+
     user = models.ForeignKey(
         'users.User',
         on_delete=models.CASCADE,
@@ -27,12 +28,13 @@ class Like(models.Model):
         ordering = ['-created_at']
 
     def clean(self):
-        targets = [self.idea.id,]
+        targets = [self.idea.id, ]
         filled = sum(1 for t in targets if t is not None)
         if filled != 1:
             raise ValidationError(
                 'Лайк должен быть привязан только к одной сущности'
             )
+
     def __str__(self):
         target = self.idea
         return f'{self.user} -> {target}'
