@@ -46,8 +46,10 @@ INSTALLED_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.users.apps.UsersConfig',
     'apps.ideas.apps.IdeasConfig',
+    'apps.posts.apps.PostsConfig',
     'apps.likes.apps.LikesConfig',
     'apps.subscriptions.apps.SubscriptionsConfig',
+
 
 ]
 
