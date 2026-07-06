@@ -14,7 +14,7 @@ from apps.ideas.forms import IdeaCreateForm
 from apps.ideas.models import Idea
 from apps.ideas.services.idea import create_idea, update_idea
 from apps.likes.services import switch
-from apps.likes.utils import annotate_likes
+from apps.likes.utils import annotate_queryset_likes, annotate_object_likes
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class IdeasList(ListView):
                 Q(title__icontains=search_query) |
                 Q(about__icontains=search_query)
             )
-        return annotate_likes(queryset=ideas, user=self.request.user, model_name='idea')
+        return annotate_queryset_likes(queryset=ideas, user=self.request.user, model_name='idea')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,8 +65,8 @@ class IdeaDetail(DetailView):
     def get_object(self, queryset=None):
 
         idea = get_object_or_404(Idea, pk=self.kwargs['pk'])
+        idea = annotate_object_likes(idea, self.request.user, 'idea')
 
-        # Добавляем статистику
         idea.open_roles_count = sum(1 for role in idea.roles.all() if role.is_open)
         idea.has_team = any(role.count_filled > 0 for role in idea.roles.all())
         idea.search_pronoun = 'Мы ищем' if idea.has_team else 'Я ищу'
@@ -81,6 +81,8 @@ class IdeaDetail(DetailView):
         context['all_responses'] = idea.responses.filter(
             status__in=['approved', 'rejected']
         ).count()
+
+        context['likes_count'] = idea.likes_count
 
         if self.request.user.is_authenticated:
             # Количество откликов на рассмотрении
