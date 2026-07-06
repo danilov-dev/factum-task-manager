@@ -3,7 +3,7 @@ from django import forms
 from apps.posts.models import Post
 
 
-class CreatePostForm(forms.ModelForm):
+class PostCreateForm(forms.ModelForm):
     """Форма создания поста"""
 
     class Meta:
