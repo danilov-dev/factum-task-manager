@@ -4,7 +4,11 @@ from markdownx.models import MarkdownxField
 
 from apps.ideas.models import Idea
 from apps.users.models import User
-
+class PostQuerySet(models.QuerySet):
+    """QuerySet для постов """
+    def for_idea(self, idea_id: int):
+        """Посты для конкретной идеи"""
+        return self.filter(idea_id=idea_id).select_related('idea') #TODO добавить подгрузку комментов
 
 class Post(models.Model):
     """Класс постов у идеи"""
@@ -13,7 +17,7 @@ class Post(models.Model):
     idea = models.ForeignKey(
         Idea,
         on_delete=models.CASCADE,
-        related_name='roles',
+        related_name='posts',
         verbose_name='Идея',
     )
     author = ForeignKey(
@@ -25,6 +29,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    objects = PostQuerySet.as_manager()
+
     class Meta:
         db_table = 'post'
         verbose_name = 'Пост'
@@ -33,4 +39,5 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title} -> {self.author}'
+
 

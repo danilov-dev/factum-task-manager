@@ -48,11 +48,15 @@
                     <a href="#" class="tab-item ">Идея</a>
                 </div>
                 <div class="tab-item-wrapper">
-                    <p class="tab-item ">Посты</p>
+                    <a href="{% url 'ideas:posts:list' idea_id=idea.id %}" class="tab-item ">Посты</a>
                 </div>
                 <div class="tab-item-wrapper">
                     <p class="tab-item ">Проект</p>
                 </div>
+                <div class="tab-item-wrapper">
+                    <a href="{% url 'ideas:posts:create' idea_id=idea.id %}">Создать пост</a>
+                </div>
+
             </div>
 
         </div>
@@ -155,7 +159,7 @@
                         <h3 class="icon-link">Роли в проекте</h3>
                     </a>
                     {% if user == idea.author %}
-                    <a href="{% url 'ideas:roles:create_role' idea.pk %}" class="icon-link">
+                    <a href="{% url 'ideas:roles:create' idea.pk %}" class="icon-link">
                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                              viewBox="0 0 24 24"><title
                                 xmlns="">round-plus</title>
@@ -170,17 +174,17 @@
                     {% for role in idea.roles.all %}
                     {% if role.is_open %}
                     <div class="divided-list-item">
-                        <a href="{%url 'ideas:roles:detail' role_id=role.pk%}">{{ role.title }}</a>
+                        <a href="{%url 'ideas:roles:detail' idea_id=idea.id role_id=role.pk%}">{{ role.title }}</a>
                         <span class="user-meta">
                     Свободно: {{ role.count_filled }} из {{ role.count_needed }}
                   </span>
                         {% if user == idea.author %}
-                        <a href="{% url 'ideas:roles:delete_role' role_id=role.pk %}"
+                        <a href="{% url 'ideas:roles:delete_role' idea_id=idea.id role_id=role.pk %}"
                            class="icon-link">
                             Удалить роль
                         </a>
                         {%else%}
-                        <a href="{% url 'ideas:responses:create' role_id=role.pk%}" class="icon-link">Откликнуться</a>
+                        <a href="{% url 'ideas:responses:create' idea_id=idea.pk role_id=role.pk%}" class="icon-link">Откликнуться</a>
                         {% endif %}
                     </div>
                     {% endif %}

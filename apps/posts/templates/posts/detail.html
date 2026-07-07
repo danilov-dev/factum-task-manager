@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% load static %}
+{% load markdown_tags %}
+
+{% block content %}
+<div class="card stack">
+    <div class="card-title">
+        <a class="icon-link" href="">{{ post.title }}</a>
+    </div>
+    <div class="markdown-editor__preview">
+        <div class="text-block" style="padding: 0; margin: 0; max-width: none;">
+            {{ post.content|markdown }}
+        </div>
+    </div>
+</div>
+{% endblock %}

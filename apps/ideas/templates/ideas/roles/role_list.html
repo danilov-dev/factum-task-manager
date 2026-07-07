@@ -18,7 +18,7 @@
     <div class="list stack-without-gap">
         {% for role in roles %}
         <div class="role-list-item">
-            <a href="{% url 'ideas:roles:detail' role_id=role.id %}">
+            <a href="{% url 'ideas:roles:detail' idea_id=idea.id role_id=role.id %}">
                 <div class="cluster">
                     <div class="stack-without-gap">
                         <div class="title-box cluster">

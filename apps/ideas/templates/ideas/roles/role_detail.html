@@ -151,11 +151,11 @@
                 <div class="sidebar-panel">
                     <h3>Действия</h3>
                     <div class="stack" style="gap: var(--space-xs);">
-                        <a href="{% url 'ideas:roles:edit' role_id=role.pk %}" class="btn btn-primary"
+                        <a href="{% url 'ideas:roles:edit' idea_id=idea.id role_id=role.pk %}" class="btn btn-primary"
                            style="width: 100%;">
                             Редактировать роль
                         </a>
-                        <a href="{% url 'ideas:roles:delete_role' role_id=role.pk %}" class="btn"
+                        <a href="{% url 'ideas:roles:delete_role' idea_id=idea.id role_id=role.pk %}" class="btn"
                            style="width: 100%; color: var(--inactive);">
                             Удалить
                         </a>

@@ -1,6 +1,6 @@
 {% load static %}
 
-{% if idea %}
+
 <button
         hx-post="{% url 'ideas:switch_like' idea.id %}"
         hx-target="this"
@@ -32,5 +32,5 @@
     <span>{{ likes_count }}</span>
     {% endif %}
 </button>
-{% endif %}
+
 {% endif %}

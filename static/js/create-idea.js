@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         gfm: true
     });
 
-    const textarea = document.querySelector("#id_description");
+    const textarea = document.querySelector(".markdownx-editor");
     const preview = document.getElementById('markdown-preview');
 
     // === Функция авто-высоты ===

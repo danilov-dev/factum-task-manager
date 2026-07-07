@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'markdownx',
 
+    'apps.core.apps.CoreConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.users.apps.UsersConfig',
     'apps.ideas.apps.IdeasConfig',
