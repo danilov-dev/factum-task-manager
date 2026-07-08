@@ -21,7 +21,7 @@
                 <div class="link-box cluster">
 
                     {% include 'subscriptions/partials/_subscribe_button.html' with idea=idea is_subscribed=idea|is_subscribed_by:request.user %}
-                    {% include 'partials/like_button.html' with idea=idea is_liked=idea.is_liked likes_count=idea.likes_count%}
+                    {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id is_liked=idea.is_liked likes_count=idea.likes_count %}
 
                 </div>
             </div>

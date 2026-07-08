@@ -1,33 +1,48 @@
-from django.db import IntegrityError
 
 from apps.ideas.models import Idea
 from apps.likes.models import Like
+from apps.posts.models import Post
 
 
-def switch(user, idea=None):
-    """Переключить лайк (если нет лайка - создает и наоборот"""
-    filters = {'user':user}
-    if idea:
-        filters['idea'] = idea
-        target_obj = idea
+def switch(user, obj):
+    """Переключить лайк (если нет лайка - создает и наоборот)"""
+
+    if isinstance(obj, Idea):
+        field_name = 'idea'
+    elif isinstance(obj, Post):
+        field_name = 'post'
     else:
-        raise ValueError('Идея должна быть указана')
+        raise ValueError('Unsupported object type')
 
-    existing_like = Like.objects.filter(**filters).first()
+    existing_like = Like.objects.filter(
+        user=user,
+        **{field_name: obj}
+    ).first()
+
     if existing_like:
         existing_like.delete()
         is_liked = False
     else:
-        try:
-            Like.objects.create(**filters)
-            is_liked = True
-        except IntegrityError:
-            is_liked = False
-    likes_count = target_obj.likes.count()
+        Like.objects.create(
+            user=user,
+            **{field_name: obj}
+        )
+        is_liked = True
+
+    likes_count = Like.objects.filter(
+        **{field_name: obj}
+    ).count()
+
     return is_liked, likes_count
+
 
 def is_liked(user, obj):
     """Проверка объекта на лайк пользователя"""
+    if not user.is_authenticated:
+        return False
+
     if isinstance(obj, Idea):
-        return Like.objects.filter(user=user,idea=obj).exists()
+        return Like.objects.filter(user=user, idea=obj).exists()
+    elif isinstance(obj, Post):
+        return Like.objects.filter(user=user, post=obj).exists()
     return False

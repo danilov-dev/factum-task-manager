@@ -145,16 +145,16 @@ class IdeaUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('ideas:detail', kwargs={'pk': self.object.pk})
 
 
-@login_required
-def switch_idea_like(request, idea_id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-
-    idea = get_object_or_404(Idea, pk=idea_id)
-    is_liked, likes_count = switch(request.user, idea)
-
-    return render(request, 'partials/like_button.html', {
-        'idea': idea,
-        'likes_count': likes_count,
-        'is_liked': is_liked,
-    })
+# @login_required
+# def switch_idea_like(request, idea_id):
+#     if request.method != 'POST':
+#         return HttpResponseNotAllowed(['POST'])
+#
+#     idea = get_object_or_404(Idea, pk=idea_id)
+#     is_liked, likes_count = switch(request.user, idea)
+#
+#     return render(request, 'partials/like_button.html', {
+#         'idea': idea,
+#         'likes_count': likes_count,
+#         'is_liked': is_liked,
+#     })

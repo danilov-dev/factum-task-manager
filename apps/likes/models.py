@@ -13,6 +13,15 @@ class Like(models.Model):
         'ideas.Idea',
         on_delete=models.CASCADE,
         related_name='likes',
+        null=True,
+        blank=True,
+    )
+    post = models.ForeignKey(
+        'posts.Post',
+        on_delete=models.CASCADE,
+        related_name='likes',
+        null=True,
+        blank=True,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,13 +37,16 @@ class Like(models.Model):
         ordering = ['-created_at']
 
     def clean(self):
-        targets = [self.idea.id, ]
+        targets = [self.idea.id, self.post.id ]
         filled = sum(1 for t in targets if t is not None)
         if filled != 1:
             raise ValidationError(
                 'Лайк должен быть привязан только к одной сущности'
             )
 
+    @property
+    def target(self):
+        return self.idea or self.post
+
     def __str__(self):
-        target = self.idea
-        return f'{self.user} -> {target}'
+        return f'{self.user} -> {self.target}'
