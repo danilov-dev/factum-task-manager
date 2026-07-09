@@ -19,10 +19,11 @@
             {% if request.user.is_authenticated and request.user != idea.author %}
             <div class="idea-item-btns">
                 <div class="link-box cluster">
-
                     {% include 'subscriptions/partials/_subscribe_button.html' with idea=idea is_subscribed=idea|is_subscribed_by:request.user %}
-                    {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id is_liked=idea.is_liked likes_count=idea.likes_count %}
-
+                    <div class="like-box">
+                        {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id user_reaction=idea.user_reaction score=idea.score  %}
+                        <span>{{ score }}</span>
+                    </div>
                 </div>
             </div>
             {% endif %}

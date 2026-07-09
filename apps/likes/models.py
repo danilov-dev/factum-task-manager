@@ -1,4 +1,5 @@
-from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
@@ -9,44 +10,29 @@ class Like(models.Model):
         on_delete=models.CASCADE,
         related_name='likes',
     )
-    idea = models.ForeignKey(
-        'ideas.Idea',
-        on_delete=models.CASCADE,
-        related_name='likes',
-        null=True,
-        blank=True,
-    )
-    post = models.ForeignKey(
-        'posts.Post',
-        on_delete=models.CASCADE,
-        related_name='likes',
-        null=True,
-        blank=True,
-    )
 
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='likes',
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    value = models.SmallIntegerField(
+        choices=[(1,'like'),(-1,'dislike')],
+        default=1,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'idea'],
-                name='unique_like_on_idea',
-                condition=models.Q(idea__isnull=False)
+                fields=['user', 'content_type', 'object_id'],
+                name='unique_like_per_user_per_object',
             ),
         ]
         ordering = ['-created_at']
-
-    def clean(self):
-        targets = [self.idea.id, self.post.id ]
-        filled = sum(1 for t in targets if t is not None)
-        if filled != 1:
-            raise ValidationError(
-                'Лайк должен быть привязан только к одной сущности'
-            )
-
-    @property
-    def target(self):
-        return self.idea or self.post
+        indexes = [models.Index(fields=['content_type', 'object_id']),]
 
     def __str__(self):
-        return f'{self.user} -> {self.target}'
+        return f'{self.user} -> {self.content_object}'

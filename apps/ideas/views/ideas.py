@@ -35,7 +35,7 @@ class IdeasList(ListView):
                 Q(title__icontains=search_query) |
                 Q(about__icontains=search_query)
             )
-        return annotate_queryset_likes(queryset=ideas, user=self.request.user, model_name='idea')
+        return annotate_queryset_likes(queryset=ideas, user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,7 +65,7 @@ class IdeaDetail(DetailView):
     def get_object(self, queryset=None):
 
         idea = get_object_or_404(Idea, pk=self.kwargs['pk'])
-        idea = annotate_object_likes(idea, self.request.user, 'idea')
+        idea = annotate_object_likes(idea, self.request.user)
 
         idea.open_roles_count = sum(1 for role in idea.roles.all() if role.is_open)
         idea.has_team = any(role.count_filled > 0 for role in idea.roles.all())

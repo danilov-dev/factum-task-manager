@@ -1,4 +1,6 @@
 import logging
+
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Exists
@@ -84,6 +86,9 @@ class Idea(models.Model):
         choices=Status.choices,
         verbose_name='Статус',
     )
+
+    likes = GenericRelation('likes.Like')
+
     is_published = models.BooleanField(
         default=False,
         verbose_name='Опубликована',
