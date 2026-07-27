@@ -67,7 +67,7 @@
                 {% endif %}
 
                 <td>
-                    <a href="{% url 'ideas:roles:detail' role_id=response.role.id %}" class="table-link">
+                    <a href="{% url 'ideas:roles:detail' idea_id=response.idea.id role_id=response.role.id %}" class="table-link">
                         {{ response.role.title }}
                     </a>
 

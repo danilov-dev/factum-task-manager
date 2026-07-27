@@ -21,7 +21,7 @@
             </div>
             {%if user != role.idea.author%}
             <div class="card-header-block__actions">
-                <a href="{% url 'ideas:responses:create' role_id=role.pk%}" class="btn btn-primary">
+                <a href="{% url 'ideas:responses:create' idea_id=role.idea.id role_id=role.pk%}" class="btn btn-primary">
                     Откликнуться
                 </a>
             </div>

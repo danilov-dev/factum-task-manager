@@ -29,7 +29,7 @@
         </svg>
         {% endif %}
     </button>
-    <span class="score">{{ score }}</span>
+
     {# Кнопка дизлайка #}
     <button
             hx-post="{% url 'likes:switch_like' content_type object_id %}"
@@ -58,6 +58,11 @@
         </svg>
         {% endif %}
     </button>
-
-
+<!--    {%if score%}-->
+<!--    <span class="score">{{ score }}</span>-->
+<!--    {%endif%}-->
 </div>
+
+{% if request.META.HTTP_HX_REQUEST == 'true' %}
+<p class="subtitle" id="like_count-{{ object_id }}" hx-swap-oob="true">{{ score }}</p>
+{% endif %}

@@ -64,7 +64,7 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        idea_id = self.kwargs.get('pk')
+        idea_id = self.kwargs.get('idea_id')
         idea = get_object_or_404(Idea, id=idea_id)
 
         # Проверка прав
@@ -90,7 +90,7 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        idea_id = self.kwargs.get('pk')
+        idea_id = self.kwargs.get('idea_id')
         idea = get_object_or_404(Idea, id=idea_id)
 
         formset = RoleSkillFormSet(self.request.POST)
@@ -104,9 +104,9 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
                 formset.save()
 
             logger.info("Создана роль '%s' для идеи '%s' (id=%d)",
-                        role.title, idea.title, idea.pk)
+                        role.title, idea.title, idea.id)
             messages.success(self.request, f'Роль "{role.title}" успешно создана!')
-            return redirect('ideas:detail', pk=idea.pk)
+            return redirect('ideas:detail', pk=idea.id)
 
         return self.form_invalid(form)
 

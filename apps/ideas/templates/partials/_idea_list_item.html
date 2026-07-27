@@ -20,10 +20,7 @@
             <div class="idea-item-btns">
                 <div class="link-box cluster">
                     {% include 'subscriptions/partials/_subscribe_button.html' with idea=idea is_subscribed=idea|is_subscribed_by:request.user %}
-                    <div class="like-box">
                         {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id user_reaction=idea.user_reaction score=idea.score  %}
-                        <span>{{ score }}</span>
-                    </div>
                 </div>
             </div>
             {% endif %}
@@ -57,7 +54,7 @@
                               d="M11.293 8.293a1 1 0 0 1 1.414 0l5.657 5.657a1 1 0 0 1-1.414 1.414L12 10.414l-4.95 4.95a1 1 0 0 1-1.414-1.414z"/>
                     </g>
                 </svg>
-                <p class="subtitle">{{ idea.likes_count }}</p>
+                <p class="subtitle" id="like_count-{{idea.id}}">{{ idea.likes_count }}</p>
             </div>
 
             <div class="tag-item">

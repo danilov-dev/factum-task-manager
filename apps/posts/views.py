@@ -23,7 +23,7 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = get_object_or_404(Post, pk=self.kwargs['post_id'])
-        return annotate_object_likes(obj=post, user=self.request.user, model_name='post')
+        return annotate_object_likes(obj=post, user=self.request.user)
 
 
 class PostListView(ListView):
@@ -35,7 +35,7 @@ class PostListView(ListView):
         idea_id = self.kwargs.get('idea_id')
 
         posts = Post.objects.for_idea(idea_id=idea_id)
-        return annotate_queryset_likes(queryset=posts, user=self.request.user, model_name='post')
+        return annotate_queryset_likes(queryset=posts, user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
