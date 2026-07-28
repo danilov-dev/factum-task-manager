@@ -17,10 +17,10 @@
                 </div>
             </div>
             {% if request.user.is_authenticated and request.user != idea.author %}
-            <div class="idea-item-btns">
-                <div class="link-box cluster">
+            <div class="idea-item-btns cluster">
                     {% include 'subscriptions/partials/_subscribe_button.html' with idea=idea is_subscribed=idea|is_subscribed_by:request.user %}
-                        {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id user_reaction=idea.user_reaction score=idea.score  %}
+                <div class="like-box cluster">
+                    {% include 'likes/partials/like_button.html' with content_type='idea' object_id=idea.id user_reaction=idea.user_reaction score=idea.score  %}
                 </div>
             </div>
             {% endif %}

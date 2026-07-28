@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
@@ -37,6 +38,11 @@ class UsersListView(ListView):
 
     def get_queryset(self):
         return User.objects.all()
+
+@login_required
+def user_menu(request):
+    """Возвращает HTML для выпадающего меню пользователя."""
+    return render(request, 'users/menu.html', {'user': request.user})
 
 
 
