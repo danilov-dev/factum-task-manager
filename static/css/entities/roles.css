@@ -1,0 +1,5 @@
+.role-list-item {
+    padding: var(--space-m);
+    border-bottom: var(--border-thickness) solid var(--border-color);
+    justify-content: space-between;
+}

@@ -1,0 +1,25 @@
+.icon-link {
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+    text-decoration: none;
+    align-content: center;
+    justify-items: center;
+}
+
+.icon-link:hover {
+    color: var(--link-color);
+}
+
+.icon-link:hover.positive {
+    color: var(--btn-primary-hover);
+}
+
+.icon-link:hover.negative {
+    color: var(--inactive);
+}
+
+.icon {
+    width: 20px;
+    height: auto;
+    display: block;
+}

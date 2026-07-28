@@ -1,3 +1,4 @@
+
 .header {
     background: var(--bg-secondary);
     border: var(--border-thickness) solid var(--bg-tertiary);
@@ -5,7 +6,7 @@
 
 .header h1 {
     font-size: var(--fs-hero);
-    font-width: extra-condensed;
+    font-stretch: condensed;
 }
 
 .header-block {
@@ -13,14 +14,9 @@
     margin: var(--space-2xl);
 }
 
-.btn-link {
-    border: var(--border-thickness) solid var(--bg-tertiary);
-    border-radius: var(--border-radius-sm);
-    padding: var(--space-xs) var(--space-m);
-    transition: all 0.5s ease-out;
-    text-align: center;
-}
-
-.btn-link:hover {
-    border: var(--border-thickness) solid var(--link-hover);
+.grid-title {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--space-m);
 }

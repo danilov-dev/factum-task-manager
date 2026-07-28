@@ -1,0 +1,16 @@
+.tag {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-m);
+    background: var(--bg-tertiary);
+    border-radius: var(--elips-radius);
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    border: var(--border-thickness) solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.tag:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--link-color);
+}
