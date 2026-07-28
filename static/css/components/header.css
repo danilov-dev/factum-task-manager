@@ -20,3 +20,7 @@
     align-items: center;
     gap: var(--space-m);
 }
+
+.user-menu {
+    position: relative;
+}

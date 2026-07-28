@@ -49,7 +49,9 @@
                 </div>
             </form>
             {% if user.is_authenticated %}
-            <div class="text-cluster">
+
+            <!-- Добавлен id="userMenu" -->
+            <div class="text-cluster user-menu" id="userMenu">
                 {# Аватар #}
                 {% if user.avatar %}
                 <img src="{{ user.avatar.url }}"
@@ -60,14 +62,24 @@
                     {{ user.username|first|upper }}
                 </div>
                 {% endif %}
-                <a class="icon-link" href="{% url 'users:profile' username=user.username %}">{{ user.username }}</a>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-menu_item">
+                        <a href="#">Мои проекты</a>
+                    </div>
+                    <div class="dropdown-menu_item">
+                        <a href="{% url 'users:profile' username=user.username %}">Профиль</a>
+                    </div>
+                    <div class="dropdown-menu_item">
+                        <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <span>Выйти</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <form method="post" action="{% url 'accounts:logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn btn-link">
-                    <span>Выйти</span>
-                </button>
-            </form>
             {% else %}
             <a href="{% url 'accounts:login' %}" class="btn-link">Log in</a>
             <a href="{% url 'accounts:signup' %}" class="btn-link">Sign up</a>
@@ -100,5 +112,6 @@
 </div>
 
 <script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/user_dropdown_menu.js' %}"></script>
 </body>
 </html>

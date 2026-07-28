@@ -37,7 +37,7 @@
 
         <div class="button-group">
             <button type="submit">Сохранить</button>
-            <a href="{% url 'ideas:detail' pk=idea.pk%}">Отмена</a>
+            <a href="{% url 'ideas:detail' idea_id=idea.pk%}">Отмена</a>
         </div>
     </form>
 </div>

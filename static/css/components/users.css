@@ -26,6 +26,7 @@
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    cursor: pointer;
 }
 
 .user-info {
