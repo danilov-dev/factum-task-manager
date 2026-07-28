@@ -52,7 +52,7 @@
                 {% for idea in ideas %}
                 <tr>
                     <td>
-                        <a href="{% url 'ideas:detail' pk=idea.pk %}" class="table-link">
+                        <a href="{% url 'ideas:detail' idea_id=idea.pk %}" class="table-link">
                             {{ idea.title }}
                         </a>
                     </td>
@@ -65,9 +65,9 @@
                     <td>{{ idea.created_at|date:"d.m.Y" }}</td>
                     <td style="text-align: right;">
                         <div class="cluster" style="justify-content: flex-end;">
-                            <a href="{% url 'ideas:detail' pk=idea.pk %}" class="btn-sm">Просмотр</a>
+                            <a href="{% url 'ideas:detail' idea_id=idea.pk %}" class="btn-sm">Просмотр</a>
                             {% if user == idea.author %}
-                            <a href="{% url 'ideas:edit' pk=idea.pk %}" class="btn-sm btn-edit">✎</a>
+                            <a href="{% url 'ideas:edit' idea_id=idea.pk %}" class="btn-sm btn-edit">✎</a>
                             {% endif %}
                         </div>
                     </td>

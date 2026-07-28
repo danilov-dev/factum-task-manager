@@ -70,7 +70,7 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
         # Проверка прав
         if self.request.user != idea.author:
             messages.error(self.request, 'Вы не можете добавлять роли к этой инициативе')
-            return redirect('ideas:detail', pk=idea.id)
+            return redirect('ideas:detail', idea_id=idea.id)
 
         # Подготовка данных для навыков
         skills_by_category = defaultdict(list)
@@ -106,7 +106,7 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
             logger.info("Создана роль '%s' для идеи '%s' (id=%d)",
                         role.title, idea.title, idea.id)
             messages.success(self.request, f'Роль "{role.title}" успешно создана!')
-            return redirect('ideas:detail', pk=idea.id)
+            return redirect('ideas:detail', idea_id=idea.id)
 
         return self.form_invalid(form)
 
@@ -127,7 +127,7 @@ class RoleUpdateView(LoginRequiredMixin, UpdateView):
         # Проверка прав
         if self.request.user != idea.author:
             messages.error(self.request, 'Вы не можете редактировать эту роль')
-            return redirect('ideas:detail', pk=idea.id)
+            return redirect('ideas:detail', idea_id=idea.id)
 
         # Подготовка данных для навыков
         skills_by_category = defaultdict(list)
@@ -161,7 +161,7 @@ class RoleUpdateView(LoginRequiredMixin, UpdateView):
 
             logger.info("Обновлена роль '%s' (id=%d)", role.title, role.pk)
             messages.success(self.request, f'Роль "{role.title}" успешно обновлена!')
-            return redirect('ideas:detail', pk=idea.id)
+            return redirect('ideas:detail', idea_id=idea.id)
 
         return self.form_invalid(form)
 
@@ -187,7 +187,7 @@ class DeleteRoleView(LoginRequiredMixin, DeleteView):
         else:
             messages.success(self.request, f"Роль {role_title} удалена.")
 
-        return redirect('ideas:detail', pk=idea_id)
+        return redirect('ideas:detail', idea_id=idea_id)
 
 
 # FBV для API (не CRUD, а получение данных)

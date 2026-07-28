@@ -10,6 +10,6 @@ from apps.ideas.views.ideas import (
 urlpatterns = [
     path('', IdeasList.as_view(), name='idea_list'),
     path('create/', IdeaCreateView.as_view(), name='create'),
-    path('<int:pk>/', IdeaDetail.as_view(), name='detail'),
-    path('<int:pk>/edit/', IdeaUpdateView.as_view(), name='edit'),
+    path('<int:idea_id>/', IdeaDetail.as_view(), name='detail'),
+    path('<int:idea_id>/edit/', IdeaUpdateView.as_view(), name='edit'),
 ]

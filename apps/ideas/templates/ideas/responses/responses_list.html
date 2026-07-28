@@ -7,7 +7,7 @@
     <!-- Хлебные крошки / Заголовок -->
     <div class="breadcrumb">
         {% if idea %}
-        <a href="{% url 'ideas:detail' pk=idea.id %}">{{ idea.title|truncatechars:30 }}</a>
+        <a href="{% url 'ideas:detail' idea_id=idea.id %}">{{ idea.title|truncatechars:30 }}</a>
         <span>Отклики</span>
         {% else %}
         <a href="{% url 'users:profile' username=user.username %}">Профиль</a>
@@ -60,7 +60,7 @@
             <tr>
                 {% if not idea %}
                 <td>
-                    <a href="{% url 'ideas:detail' pk=response.role.idea.id %}" class="table-link">
+                    <a href="{% url 'ideas:detail' idea_id=response.role.idea.id %}" class="table-link">
                         {{ response.role.idea.title|truncatechars:25 }}
                     </a>
                 </td>

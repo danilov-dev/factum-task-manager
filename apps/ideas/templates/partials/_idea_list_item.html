@@ -9,7 +9,7 @@
                     <path fill="currentColor" d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/>
                 </svg>
                 {% endif %}
-                <a href="{% url 'ideas:detail' pk=idea.pk %}" class="icon-link">
+                <a href="{% url 'ideas:detail' idea_id=idea.id %}" class="icon-link">
                     <h2 class="card-title idea-title-link">{{idea.title}}</h2>
                 </a>
                 <div class="status-badge status-{{ idea.status }}">

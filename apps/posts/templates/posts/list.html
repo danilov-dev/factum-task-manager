@@ -6,7 +6,7 @@
 <div class="container">
     <!-- Хлебные крошки -->
     <nav class="breadcrumb" aria-label="breadcrumb">
-        <a href="{% url 'ideas:detail' pk=idea_id %}"
+        <a href="{% url 'ideas:detail' idea_id=idea_id %}"
            title="{{ idea_title }}"> {{ idea_title|truncatechars:25 }} </a>
         <span>Посты</span>
     </nav>

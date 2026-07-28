@@ -64,7 +64,7 @@ class IdeaDetail(DetailView):
 
     def get_object(self, queryset=None):
 
-        idea = get_object_or_404(Idea, pk=self.kwargs['pk'])
+        idea = get_object_or_404(Idea, pk=self.kwargs['idea_id'])
         idea = annotate_object_likes(idea, self.request.user)
 
         idea.open_roles_count = sum(1 for role in idea.roles.all() if role.is_open)
@@ -112,7 +112,7 @@ class IdeaCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('ideas:detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('ideas:detail', kwargs={'idea_id': self.object.pk})
 
 
 class IdeaUpdateView(LoginRequiredMixin, UpdateView):
@@ -122,7 +122,7 @@ class IdeaUpdateView(LoginRequiredMixin, UpdateView):
     context_object_name = 'idea'
 
     def get_object(self, queryset=None):
-        idea = get_object_or_404(Idea, pk=self.kwargs['pk'])
+        idea = get_object_or_404(Idea, pk=self.kwargs['idea_id'])
         if idea.author != self.request.user:
             raise PermissionDenied("Только автор может редактировать")
         return idea
@@ -142,7 +142,7 @@ class IdeaUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('ideas:detail', kwargs={'pk': self.object.pk})
+        return reverse('ideas:detail', kwargs={'idea_id': self.object.pk})
 
 
 # @login_required

@@ -18,7 +18,7 @@
         <div class="stack">
             <div class="cluster">
                 {%if user == idea.author%}
-                <a href="{% url 'ideas:edit' pk=idea.pk %}" class="icon-link ">
+                <a href="{% url 'ideas:edit' idea_id=idea.pk %}" class="icon-link ">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                         <title
                                 xmlns="">
