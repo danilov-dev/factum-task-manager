@@ -1,0 +1,61 @@
+{% load static %}
+<div class="user-menu-content">
+    <div class="user-menu-header">
+        {% if user.avatar %}
+        <img src="{{ user.avatar.url }}"
+             alt="Аватар {{ user.username }}"
+             class="user-menu-avatar">
+        {% else %}
+        <div class="user-menu-avatar-char">
+            {{ user.username|first|upper }}
+        </div>
+        {% endif %}
+        <div class="user-menu-userinfo">
+            <div class="user-menu-username">{{ user.username }}</div>
+            <div class="user-menu-email">{{ user.email|default:"нет почты" }}</div>
+        </div>
+    </div>
+
+    <hr class="user-menu-divider">
+
+    <ul class="user-menu-list">
+        <li>
+            <a href="{% url 'users:profile' username=user.username %}" class="user-menu-item">
+                <span class="user-menu-icon">👤</span>
+                Профиль
+            </a>
+        </li>
+        <li>
+            <a href="#" class="user-menu-item">
+                <span class="user-menu-icon">⚙️</span>
+                Настройки
+            </a>
+        </li>
+        <li>
+            <a href="#" class="user-menu-item">
+                <span class="user-menu-icon">⭐</span>
+                Избранное
+            </a>
+        </li>
+    </ul>
+
+    <hr class="user-menu-divider">
+
+    <ul class="user-menu-list">
+        <li>
+            <a href="#" class="user-menu-item">
+                <span class="user-menu-icon">❓</span>
+                Помощь
+            </a>
+        </li>
+        <li>
+            <form method="post" action="{% url 'accounts:logout' %}" class="user-menu-logout-form">
+                {% csrf_token %}
+                <button type="submit" class="user-menu-item user-menu-logout">
+                    <span class="user-menu-icon">🚪</span>
+                    Выйти
+                </button>
+            </form>
+        </li>
+    </ul>
+</div>
